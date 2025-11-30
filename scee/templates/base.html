@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SCEE - Loja de Eletrônicos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">SCEE</a>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Início</a></li>
+                <li><a href="{{ url_for('produtos') }}">Produtos</a></li>
+                <li><a href="{{ url_for('carrinho') }}">Carrinho</a></li>
+                {% if session.get('cliente_id') %}
+                    <li><a href="{{ url_for('minha_conta') }}">Minha Conta</a></li>
+                    <li><a href="{{ url_for('logout') }}">Sair</a></li>
+                {% elif session.get('admin_id') %}
+                    <li><a href="{{ url_for('admin_dashboard') }}">Admin</a></li>
+                    <li><a href="{{ url_for('logout') }}">Sair</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('registro') }}">Registrar</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 SCEE - Sistema de Comércio Eletrônico de Eletrônicos</p>
+        </div>
+    </footer>
+</body>
+</html>

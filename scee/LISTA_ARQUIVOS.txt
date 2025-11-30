@@ -1,0 +1,120 @@
+LISTA COMPLETA DE ARQUIVOS DO PROJETO SCEE
+==========================================
+
+RAIZ DO PROJETO
+---------------
+.gitignore
+app.py
+database.py
+init_db.py
+requirements.txt
+README.md
+GUIA_INSTALACAO.md
+RESUMO_PROJETO.md
+CHECKLIST_REQUISITOS.md
+SOBRE_O_PROJETO.md
+LISTA_ARQUIVOS.txt
+
+MODELS/ (Entidades ORM)
+-----------------------
+models/__init__.py
+models/base.py
+models/admin.py
+models/categoria.py
+models/cliente.py
+models/endereco.py
+models/imagem_produto.py
+models/item_pedido.py
+models/pedido.py
+models/produto.py
+
+REPOSITORIES/ (Camada de Persistência)
+---------------------------------------
+repositories/__init__.py
+repositories/base_repository.py
+repositories/admin_repository.py
+repositories/categoria_repository.py
+repositories/cliente_repository.py
+repositories/endereco_repository.py
+repositories/pedido_repository.py
+repositories/produto_repository.py
+
+CONTROLLERS/ (Lógica de Negócios)
+----------------------------------
+controllers/__init__.py
+controllers/auth_controller.py
+controllers/carrinho_controller.py
+controllers/cliente_controller.py
+controllers/pedido_controller.py
+controllers/produto_controller.py
+
+TEMPLATES/ (Views HTML)
+-----------------------
+templates/base.html
+templates/index.html
+templates/login.html
+templates/registro.html
+templates/produtos.html
+templates/produto_detalhe.html
+templates/carrinho.html
+templates/checkout.html
+templates/minha_conta.html
+
+TEMPLATES/ADMIN/ (Views Admin)
+------------------------------
+templates/admin/dashboard.html
+templates/admin/pedidos.html
+templates/admin/produtos.html
+templates/admin/produto_form.html
+
+STATIC/CSS/ (Estilos)
+---------------------
+static/css/style.css
+
+STATIC/UPLOADS/ (Imagens de Produtos)
+--------------------------------------
+static/uploads/.gitkeep
+
+DOCS/ (Documentação)
+--------------------
+docs/INDEX.md
+docs/diagrama_classes.md
+docs/diagrama_casos_uso.md
+docs/esquema_banco_dados.md
+docs/EXEMPLOS_USO.md
+
+TOTAL DE ARQUIVOS
+-----------------
+Arquivos Python: 26
+Arquivos HTML: 13
+Arquivos CSS: 1
+Arquivos Markdown: 10
+Arquivos de Configuração: 3
+TOTAL: 53 arquivos
+
+ESTRUTURA DE DIRETÓRIOS
+-----------------------
+scee/
+├── models/          (10 arquivos)
+├── repositories/    (8 arquivos)
+├── controllers/     (6 arquivos)
+├── templates/       (9 arquivos)
+│   └── admin/      (4 arquivos)
+├── static/
+│   ├── css/        (1 arquivo)
+│   └── uploads/    (1 arquivo)
+└── docs/           (5 arquivos)
+
+ARQUIVOS GERADOS EM RUNTIME
+---------------------------
+scee_loja.db         (Banco de dados SQLite)
+venv/                (Ambiente virtual Python)
+__pycache__/         (Cache Python)
+
+OBSERVAÇÕES
+-----------
+- Todos os arquivos .py possuem docstrings
+- Todos os templates HTML são responsivos
+- Documentação completa em Markdown
+- Código modular e bem organizado
+- Separação clara de responsabilidades

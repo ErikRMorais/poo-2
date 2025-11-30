@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos - SCEE{% endblock %}
+
+{% block content %}
+<h1>Produtos</h1>
+
+<div class="filtros">
+    <form method="GET" class="filtro-form">
+        <input type="text" name="q" placeholder="Buscar produtos..." value="{{ request.args.get('q', '') }}">
+        
+        <select name="categoria">
+            <option value="">Todas as Categorias</option>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.id }}" {% if request.args.get('categoria')|int == categoria.id %}selected{% endif %}>
+                {{ categoria.nome }}
+            </option>
+            {% endfor %}
+        </select>
+        
+        <input type="number" name="min_preco" placeholder="Preço mín." step="0.01" value="{{ request.args.get('min_preco', '') }}">
+        <input type="number" name="max_preco" placeholder="Preço máx." step="0.01" value="{{ request.args.get('max_preco', '') }}">
+        
+        <button type="submit" class="btn">Filtrar</button>
+    </form>
+</div>
+
+<div class="produto-grid">
+    {% for produto in produtos %}
+    <div class="produto-card">
+        {% if produto.imagens %}
+            <img src="{{ url_for('static', filename='uploads/' + produto.imagens[0].caminho.split('/')[-1]) }}" alt="{{ produto.nome }}">
+        {% else %}
+            <div class="produto-sem-imagem">Sem imagem</div>
+        {% endif %}
+        <h3>{{ produto.nome }}</h3>
+        <p class="categoria">{{ produto.categoria.nome }}</p>
+        <p class="preco">R$ {{ "%.2f"|format(produto.preco) }}</p>
+        <p class="estoque">Estoque: {{ produto.estoque }}</p>
+        <a href="{{ url_for('produto_detalhe', produto_id=produto.id) }}" class="btn">Ver Detalhes</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% if total_pages > 1 %}
+<div class="paginacao">
+    {% for page_num in range(1, total_pages + 1) %}
+        <a href="{{ url_for('produtos', page=page_num, categoria=request.args.get('categoria'), q=request.args.get('q')) }}" 
+           class="{% if page_num == current_page %}active{% endif %}">{{ page_num }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

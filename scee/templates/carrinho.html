@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Carrinho - SCEE{% endblock %}
+
+{% block content %}
+<h1>Carrinho de Compras</h1>
+
+{% if itens %}
+<div class="carrinho-container">
+    <table class="carrinho-table">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Preço</th>
+                <th>Quantidade</th>
+                <th>Subtotal</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in itens %}
+            <tr>
+                <td>{{ item.nome }}</td>
+                <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('atualizar_carrinho', produto_id=item.produto_id) }}" class="form-inline">
+                        <input type="number" name="quantidade" value="{{ item.quantidade }}" min="1" required>
+                        <button type="submit" class="btn btn-sm">Atualizar</button>
+                    </form>
+                </td>
+                <td>R$ {{ "%.2f"|format(item.subtotal) }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('remover_carrinho', produto_id=item.produto_id) }}" class="form-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="carrinho-total">
+        <h2>Total: R$ {{ "%.2f"|format(total) }}</h2>
+        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-large">Finalizar Compra</a>
+    </div>
+</div>
+{% else %}
+<p class="text-center">Seu carrinho está vazio.</p>
+<a href="{{ url_for('produtos') }}" class="btn">Continuar Comprando</a>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ produto.nome }} - SCEE{% endblock %}
+
+{% block content %}
+<div class="produto-detalhe">
+    <div class="produto-imagens">
+        {% if produto.imagens %}
+            {% for imagem in produto.imagens %}
+            <img src="{{ url_for('static', filename='uploads/' + imagem.caminho.split('/')[-1]) }}" alt="{{ produto.nome }}">
+            {% endfor %}
+        {% else %}
+            <div class="produto-sem-imagem-grande">Sem imagem</div>
+        {% endif %}
+    </div>
+    
+    <div class="produto-info">
+        <h1>{{ produto.nome }}</h1>
+        <p class="categoria">Categoria: {{ produto.categoria.nome }}</p>
+        <p class="sku">SKU: {{ produto.sku }}</p>
+        <p class="preco-grande">R$ {{ "%.2f"|format(produto.preco) }}</p>
+        <p class="estoque">Estoque disponível: {{ produto.estoque }} unidades</p>
+        
+        <div class="descricao">
+            <h2>Descrição</h2>
+            <p>{{ produto.descricao }}</p>
+        </div>
+        
+        {% if produto.estoque > 0 %}
+        <form method="POST" action="{{ url_for('adicionar_carrinho', produto_id=produto.id) }}" class="form-adicionar">
+            <div class="form-group">
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" id="quantidade" name="quantidade" value="1" min="1" max="{{ produto.estoque }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar ao Carrinho</button>
+        </form>
+        {% else %}
+        <p class="sem-estoque">Produto indisponível</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

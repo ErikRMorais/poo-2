@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Admin - SCEE{% endblock %}
+
+{% block content %}
+<h1>Painel Administrativo</h1>
+
+<div class="admin-dashboard">
+    <div class="dashboard-card">
+        <h2>Produtos</h2>
+        <p>Gerenciar catálogo de produtos</p>
+        <a href="{{ url_for('admin_produtos') }}" class="btn">Acessar</a>
+    </div>
+    
+    <div class="dashboard-card">
+        <h2>Pedidos</h2>
+        <p>Visualizar e gerenciar pedidos</p>
+        <a href="{{ url_for('admin_pedidos') }}" class="btn">Acessar</a>
+    </div>
+</div>
+{% endblock %}

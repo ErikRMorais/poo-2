@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Minha Conta - SCEE{% endblock %}
+
+{% block content %}
+<h1>Minha Conta</h1>
+
+<div class="conta-container">
+    <section class="conta-secao">
+        <h2>Meus Endereços</h2>
+        {% if enderecos %}
+        <ul class="endereco-lista">
+            {% for endereco in enderecos %}
+            <li>
+                {{ endereco.rua }}, {{ endereco.numero }}
+                {% if endereco.complemento %}({{ endereco.complemento }}){% endif %}
+                - {{ endereco.bairro }}, {{ endereco.cidade }}/{{ endereco.estado }}
+                - CEP: {{ endereco.cep }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>Nenhum endereço cadastrado.</p>
+        {% endif %}
+    </section>
+    
+    <section class="conta-secao">
+        <h2>Meus Pedidos</h2>
+        {% if pedidos %}
+        <table class="pedidos-table">
+            <thead>
+                <tr>
+                    <th>Pedido #</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td>{{ pedido.id }}</td>
+                    <td>{{ pedido.data_pedido.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td><span class="status-{{ pedido.status.lower() }}">{{ pedido.status }}</span></td>
+                    <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Nenhum pedido realizado.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

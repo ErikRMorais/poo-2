@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Produtos - Admin{% endblock %}
+
+{% block content %}
+<h1>Gerenciar Produtos</h1>
+
+<div class="admin-actions">
+    <a href="{{ url_for('admin_criar_produto') }}" class="btn btn-primary">Novo Produto</a>
+</div>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>SKU</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for produto in produtos %}
+        <tr>
+            <td>{{ produto.id }}</td>
+            <td>{{ produto.nome }}</td>
+            <td>{{ produto.sku }}</td>
+            <td>{{ produto.categoria.nome }}</td>
+            <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+            <td>{{ produto.estoque }}</td>
+            <td>
+                <a href="{{ url_for('admin_editar_produto', produto_id=produto.id) }}" class="btn btn-sm">Editar</a>
+                <form method="POST" action="{{ url_for('admin_deletar_produto', produto_id=produto.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Confirma exclusão?')">Deletar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if total_pages > 1 %}
+<div class="paginacao">
+    {% for page_num in range(1, total_pages + 1) %}
+        <a href="{{ url_for('admin_produtos', page=page_num) }}" 
+           class="{% if page_num == current_page %}active{% endif %}">{{ page_num }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

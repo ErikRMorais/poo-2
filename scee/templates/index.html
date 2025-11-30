@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Início - SCEE{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Bem-vindo à SCEE</h1>
+    <p>Os melhores eletrônicos com os melhores preços</p>
+</div>
+
+<section class="categorias">
+    <h2>Categorias</h2>
+    <div class="categoria-grid">
+        {% for categoria in categorias %}
+        <a href="{{ url_for('produtos', categoria=categoria.id) }}" class="categoria-card">
+            <h3>{{ categoria.nome }}</h3>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="produtos-destaque">
+    <h2>Produtos em Destaque</h2>
+    <div class="produto-grid">
+        {% for produto in produtos %}
+        <div class="produto-card">
+            {% if produto.imagens %}
+                <img src="{{ url_for('static', filename='uploads/' + produto.imagens[0].caminho.split('/')[-1]) }}" alt="{{ produto.nome }}">
+            {% else %}
+                <div class="produto-sem-imagem">Sem imagem</div>
+            {% endif %}
+            <h3>{{ produto.nome }}</h3>
+            <p class="preco">R$ {{ "%.2f"|format(produto.preco) }}</p>
+            <a href="{{ url_for('produto_detalhe', produto_id=produto.id) }}" class="btn">Ver Detalhes</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
