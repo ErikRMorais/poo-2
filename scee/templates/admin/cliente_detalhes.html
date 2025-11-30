@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Cliente - Admin SCEE{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Detalhes do Cliente</h1>
+    
+    <div class="admin-actions">
+        <a href="{{ url_for('admin_clientes') }}" class="btn btn-secondary">Voltar para Clientes</a>
+    </div>
+    
+    <div class="cliente-info">
+        <h2>Informações Pessoais</h2>
+        <table class="info-table">
+            <tr>
+                <th>ID:</th>
+                <td>{{ cliente.id }}</td>
+            </tr>
+            <tr>
+                <th>Nome:</th>
+                <td>{{ cliente.nome }}</td>
+            </tr>
+            <tr>
+                <th>E-mail:</th>
+                <td>{{ cliente.email }}</td>
+            </tr>
+            <tr>
+                <th>CPF:</th>
+                <td>{{ cliente.cpf }}</td>
+            </tr>
+            <tr>
+                <th>Data de Cadastro:</th>
+                <td>{{ cliente.data_cadastro.strftime('%d/%m/%Y %H:%M') if cliente.data_cadastro else '-' }}</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="cliente-enderecos">
+        <h2>Endereços ({{ enderecos|length }})</h2>
+        {% if enderecos %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>CEP</th>
+                    <th>Endereço</th>
+                    <th>Cidade/Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for endereco in enderecos %}
+                <tr>
+                    <td>{{ endereco.cep }}</td>
+                    <td>{{ endereco.rua }}, {{ endereco.numero }}{% if endereco.complemento %} - {{ endereco.complemento }}{% endif %}, {{ endereco.bairro }}</td>
+                    <td>{{ endereco.cidade }}/{{ endereco.estado }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Nenhum endereço cadastrado.</p>
+        {% endif %}
+    </div>
+    
+    <div class="cliente-pedidos">
+        <h2>Histórico de Pedidos ({{ pedidos|length }})</h2>
+        <p><strong>Total Gasto:</strong> R$ {{ "%.2f"|format(total_gasto) }}</p>
+        
+        {% if pedidos %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Método Pagamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td>#{{ pedido.id }}</td>
+                    <td>{{ pedido.data_pedido.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
+                    <td><span class="status-badge status-{{ pedido.status|lower }}">{{ pedido.status }}</span></td>
+                    <td>{{ pedido.metodo_pagamento }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Nenhum pedido realizado.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.cliente-info, .cliente-enderecos, .cliente-pedidos {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.info-table {
+    width: 100%;
+    max-width: 600px;
+}
+
+.info-table th {
+    text-align: left;
+    padding: 10px;
+    width: 200px;
+    font-weight: bold;
+}
+
+.info-table td {
+    padding: 10px;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-pendente { background: #ffc107; color: #000; }
+.status-processando { background: #17a2b8; color: #fff; }
+.status-enviado { background: #007bff; color: #fff; }
+.status-entregue { background: #28a745; color: #fff; }
+.status-cancelado { background: #dc3545; color: #fff; }
+</style>
+{% endblock %}

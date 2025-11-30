@@ -106,9 +106,12 @@ class ProdutoController:
                 filepath = os.path.join(self.upload_folder, filename)
                 imagem.save(filepath)
                 
+                # Salvar apenas o caminho relativo (uploads/filename)
+                caminho_relativo = f"uploads/{filename}"
+                
                 img_produto = ImagemProduto(
                     produto_id=produto.id,
-                    caminho=filepath,
+                    caminho=caminho_relativo,
                     ordem=i
                 )
                 self.session.add(img_produto)

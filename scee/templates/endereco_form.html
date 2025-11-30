@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{% if endereco %}Editar{% else %}Adicionar{% endif %} Endereço - SCEE{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{% if endereco %}Editar{% else %}Adicionar{% endif %} Endereço</h1>
+    
+    <form method="POST" class="form-container">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="cep">CEP:</label>
+                <input type="text" id="cep" name="cep" value="{% if endereco %}{{ endereco.cep }}{% endif %}" 
+                       placeholder="00000-000" required maxlength="9">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="rua">Rua/Avenida:</label>
+            <input type="text" id="rua" name="rua" value="{% if endereco %}{{ endereco.rua }}{% endif %}" required>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="numero">Número:</label>
+                <input type="text" id="numero" name="numero" value="{% if endereco %}{{ endereco.numero }}{% endif %}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="complemento">Complemento:</label>
+                <input type="text" id="complemento" name="complemento" value="{% if endereco %}{{ endereco.complemento }}{% endif %}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="bairro">Bairro:</label>
+            <input type="text" id="bairro" name="bairro" value="{% if endereco %}{{ endereco.bairro }}{% endif %}" required>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="cidade">Cidade:</label>
+                <input type="text" id="cidade" name="cidade" value="{% if endereco %}{{ endereco.cidade }}{% endif %}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Selecione...</option>
+                    <option value="AC" {% if endereco and endereco.estado == 'AC' %}selected{% endif %}>AC</option>
+                    <option value="AL" {% if endereco and endereco.estado == 'AL' %}selected{% endif %}>AL</option>
+                    <option value="AP" {% if endereco and endereco.estado == 'AP' %}selected{% endif %}>AP</option>
+                    <option value="AM" {% if endereco and endereco.estado == 'AM' %}selected{% endif %}>AM</option>
+                    <option value="BA" {% if endereco and endereco.estado == 'BA' %}selected{% endif %}>BA</option>
+                    <option value="CE" {% if endereco and endereco.estado == 'CE' %}selected{% endif %}>CE</option>
+                    <option value="DF" {% if endereco and endereco.estado == 'DF' %}selected{% endif %}>DF</option>
+                    <option value="ES" {% if endereco and endereco.estado == 'ES' %}selected{% endif %}>ES</option>
+                    <option value="GO" {% if endereco and endereco.estado == 'GO' %}selected{% endif %}>GO</option>
+                    <option value="MA" {% if endereco and endereco.estado == 'MA' %}selected{% endif %}>MA</option>
+                    <option value="MT" {% if endereco and endereco.estado == 'MT' %}selected{% endif %}>MT</option>
+                    <option value="MS" {% if endereco and endereco.estado == 'MS' %}selected{% endif %}>MS</option>
+                    <option value="MG" {% if endereco and endereco.estado == 'MG' %}selected{% endif %}>MG</option>
+                    <option value="PA" {% if endereco and endereco.estado == 'PA' %}selected{% endif %}>PA</option>
+                    <option value="PB" {% if endereco and endereco.estado == 'PB' %}selected{% endif %}>PB</option>
+                    <option value="PR" {% if endereco and endereco.estado == 'PR' %}selected{% endif %}>PR</option>
+                    <option value="PE" {% if endereco and endereco.estado == 'PE' %}selected{% endif %}>PE</option>
+                    <option value="PI" {% if endereco and endereco.estado == 'PI' %}selected{% endif %}>PI</option>
+                    <option value="RJ" {% if endereco and endereco.estado == 'RJ' %}selected{% endif %}>RJ</option>
+                    <option value="RN" {% if endereco and endereco.estado == 'RN' %}selected{% endif %}>RN</option>
+                    <option value="RS" {% if endereco and endereco.estado == 'RS' %}selected{% endif %}>RS</option>
+                    <option value="RO" {% if endereco and endereco.estado == 'RO' %}selected{% endif %}>RO</option>
+                    <option value="RR" {% if endereco and endereco.estado == 'RR' %}selected{% endif %}>RR</option>
+                    <option value="SC" {% if endereco and endereco.estado == 'SC' %}selected{% endif %}>SC</option>
+                    <option value="SP" {% if endereco and endereco.estado == 'SP' %}selected{% endif %}>SP</option>
+                    <option value="SE" {% if endereco and endereco.estado == 'SE' %}selected{% endif %}>SE</option>
+                    <option value="TO" {% if endereco and endereco.estado == 'TO' %}selected{% endif %}>TO</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar Endereço</button>
+            <a href="{{ url_for('minha_conta') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

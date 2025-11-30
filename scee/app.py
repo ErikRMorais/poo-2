@@ -127,13 +127,17 @@ def minha_conta():
         return redirect(url_for('login'))
     
     db_session = db.get_session()
+    from repositories.cliente_repository import ClienteRepository
+    cliente_repo = ClienteRepository(db_session)
+    cliente = cliente_repo.get_by_id(session['cliente_id'])
+    
     cliente_controller = ClienteController(db_session)
     enderecos = cliente_controller.listar_enderecos(session['cliente_id'])
     
     pedido_controller = PedidoController(db_session)
     pedidos = pedido_controller.listar_pedidos_cliente(session['cliente_id'])
     
-    return render_template('minha_conta.html', enderecos=enderecos, pedidos=pedidos)
+    return render_template('minha_conta.html', cliente=cliente, enderecos=enderecos, pedidos=pedidos)
 
 
 @app.route('/produtos')
@@ -430,6 +434,332 @@ def admin_atualizar_status_pedido(pedido_id):
     
     flash(mensagem, 'success' if sucesso else 'error')
     return redirect(url_for('admin_pedidos'))
+
+
+# ==================== ROTAS DE EDIÇÃO DE PERFIL ====================
+
+@app.route('/perfil/editar', methods=['GET', 'POST'])
+def editar_perfil():
+    """Editar dados do cliente."""
+    if 'cliente_id' not in session:
+        flash('Faça login para acessar esta página', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    from repositories.cliente_repository import ClienteRepository
+    cliente_repo = ClienteRepository(db_session)
+    cliente = cliente_repo.get_by_id(session['cliente_id'])
+    
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        email = request.form.get('email')
+        
+        # Validar e-mail único (exceto o próprio)
+        cliente_existente = cliente_repo.get_by_email(email)
+        if cliente_existente and cliente_existente.id != cliente.id:
+            flash('E-mail já cadastrado por outro usuário', 'error')
+            return render_template('editar_perfil.html', cliente=cliente)
+        
+        cliente.nome = nome
+        cliente.email = email
+        
+        try:
+            cliente_repo.update(cliente)
+            session['cliente_nome'] = nome
+            flash('Perfil atualizado com sucesso!', 'success')
+            return redirect(url_for('minha_conta'))
+        except Exception as e:
+            flash(f'Erro ao atualizar perfil: {str(e)}', 'error')
+    
+    return render_template('editar_perfil.html', cliente=cliente)
+
+
+@app.route('/perfil/alterar-senha', methods=['GET', 'POST'])
+def alterar_senha():
+    """Alterar senha do cliente."""
+    if 'cliente_id' not in session:
+        flash('Faça login para acessar esta página', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        senha_atual = request.form.get('senha_atual')
+        nova_senha = request.form.get('nova_senha')
+        confirmar_senha = request.form.get('confirmar_senha')
+        
+        db_session = db.get_session()
+        from repositories.cliente_repository import ClienteRepository
+        cliente_repo = ClienteRepository(db_session)
+        cliente = cliente_repo.get_by_id(session['cliente_id'])
+        
+        # Verificar senha atual
+        ph = PasswordHasher()
+        try:
+            ph.verify(cliente.senha_hash, senha_atual)
+        except:
+            flash('Senha atual incorreta', 'error')
+            return render_template('alterar_senha.html')
+        
+        # Validar nova senha
+        if nova_senha != confirmar_senha:
+            flash('As senhas não coincidem', 'error')
+            return render_template('alterar_senha.html')
+        
+        if len(nova_senha) < 8:
+            flash('A senha deve ter no mínimo 8 caracteres', 'error')
+            return render_template('alterar_senha.html')
+        
+        # Atualizar senha
+        cliente.senha_hash = ph.hash(nova_senha)
+        cliente_repo.update(cliente)
+        
+        flash('Senha alterada com sucesso!', 'success')
+        return redirect(url_for('minha_conta'))
+    
+    return render_template('alterar_senha.html')
+
+
+# ==================== ROTAS DE ENDEREÇOS ====================
+
+@app.route('/endereco/adicionar', methods=['GET', 'POST'])
+def adicionar_endereco():
+    """Adicionar novo endereço."""
+    if 'cliente_id' not in session:
+        flash('Faça login para acessar esta página', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        cep = request.form.get('cep', '').replace('-', '').replace('.', '')
+        rua = request.form.get('rua')
+        numero = request.form.get('numero')
+        complemento = request.form.get('complemento', '')
+        bairro = request.form.get('bairro')
+        cidade = request.form.get('cidade')
+        estado = request.form.get('estado')
+        
+        db_session = db.get_session()
+        cliente_controller = ClienteController(db_session)
+        
+        sucesso, mensagem = cliente_controller.adicionar_endereco(
+            session['cliente_id'], cep, rua, numero, complemento, bairro, cidade, estado
+        )
+        
+        flash(mensagem, 'success' if sucesso else 'error')
+        if sucesso:
+            return redirect(url_for('minha_conta'))
+    
+    return render_template('endereco_form.html', endereco=None)
+
+
+@app.route('/endereco/editar/<int:endereco_id>', methods=['GET', 'POST'])
+def editar_endereco(endereco_id):
+    """Editar endereço existente."""
+    if 'cliente_id' not in session:
+        flash('Faça login para acessar esta página', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    from repositories.endereco_repository import EnderecoRepository
+    endereco_repo = EnderecoRepository(db_session)
+    endereco = endereco_repo.get_by_id(endereco_id)
+    
+    if not endereco or endereco.cliente_id != session['cliente_id']:
+        flash('Endereço não encontrado', 'error')
+        return redirect(url_for('minha_conta'))
+    
+    if request.method == 'POST':
+        endereco.cep = request.form.get('cep', '').replace('-', '').replace('.', '')
+        endereco.rua = request.form.get('rua')
+        endereco.numero = request.form.get('numero')
+        endereco.complemento = request.form.get('complemento', '')
+        endereco.bairro = request.form.get('bairro')
+        endereco.cidade = request.form.get('cidade')
+        endereco.estado = request.form.get('estado')
+        
+        try:
+            endereco_repo.update(endereco)
+            flash('Endereço atualizado com sucesso!', 'success')
+            return redirect(url_for('minha_conta'))
+        except Exception as e:
+            flash(f'Erro ao atualizar endereço: {str(e)}', 'error')
+    
+    return render_template('endereco_form.html', endereco=endereco)
+
+
+@app.route('/endereco/deletar/<int:endereco_id>', methods=['POST'])
+def deletar_endereco(endereco_id):
+    """Deletar endereço."""
+    if 'cliente_id' not in session:
+        flash('Faça login para acessar esta página', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    from repositories.endereco_repository import EnderecoRepository
+    endereco_repo = EnderecoRepository(db_session)
+    endereco = endereco_repo.get_by_id(endereco_id)
+    
+    if not endereco or endereco.cliente_id != session['cliente_id']:
+        flash('Endereço não encontrado', 'error')
+        return redirect(url_for('minha_conta'))
+    
+    try:
+        endereco_repo.delete(endereco_id)
+        flash('Endereço removido com sucesso!', 'success')
+    except Exception as e:
+        flash(f'Erro ao remover endereço: {str(e)}', 'error')
+    
+    return redirect(url_for('minha_conta'))
+
+
+# ==================== ROTAS ADMIN - CATEGORIAS ====================
+
+@app.route('/admin/categorias')
+def admin_categorias():
+    """Gerenciamento de categorias (admin)."""
+    if 'admin_id' not in session:
+        flash('Acesso negado', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    categoria_repo = CategoriaRepository(db_session)
+    categorias = categoria_repo.get_all()
+    
+    return render_template('admin/categorias.html', categorias=categorias)
+
+
+@app.route('/admin/categoria/criar', methods=['GET', 'POST'])
+def admin_criar_categoria():
+    """Criar nova categoria (admin)."""
+    if 'admin_id' not in session:
+        flash('Acesso negado', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        
+        db_session = db.get_session()
+        categoria_repo = CategoriaRepository(db_session)
+        
+        # Verificar se já existe
+        if categoria_repo.get_by_nome(nome):
+            flash('Categoria já existe', 'error')
+            return render_template('admin/categoria_form.html', categoria=None)
+        
+        from models.categoria import Categoria
+        nova_categoria = Categoria(nome=nome)
+        
+        try:
+            categoria_repo.create(nova_categoria)
+            flash('Categoria criada com sucesso!', 'success')
+            return redirect(url_for('admin_categorias'))
+        except Exception as e:
+            flash(f'Erro ao criar categoria: {str(e)}', 'error')
+    
+    return render_template('admin/categoria_form.html', categoria=None)
+
+
+@app.route('/admin/categoria/editar/<int:categoria_id>', methods=['GET', 'POST'])
+def admin_editar_categoria(categoria_id):
+    """Editar categoria (admin)."""
+    if 'admin_id' not in session:
+        flash('Acesso negado', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    categoria_repo = CategoriaRepository(db_session)
+    categoria = categoria_repo.get_by_id(categoria_id)
+    
+    if not categoria:
+        flash('Categoria não encontrada', 'error')
+        return redirect(url_for('admin_categorias'))
+    
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        
+        # Verificar se já existe (exceto a própria)
+        categoria_existente = categoria_repo.get_by_nome(nome)
+        if categoria_existente and categoria_existente.id != categoria_id:
+            flash('Já existe uma categoria com este nome', 'error')
+            return render_template('admin/categoria_form.html', categoria=categoria)
+        
+        categoria.nome = nome
+        
+        try:
+            categoria_repo.update(categoria)
+            flash('Categoria atualizada com sucesso!', 'success')
+            return redirect(url_for('admin_categorias'))
+        except Exception as e:
+            flash(f'Erro ao atualizar categoria: {str(e)}', 'error')
+    
+    return render_template('admin/categoria_form.html', categoria=categoria)
+
+
+@app.route('/admin/categoria/deletar/<int:categoria_id>', methods=['POST'])
+def admin_deletar_categoria(categoria_id):
+    """Deletar categoria (admin)."""
+    if 'admin_id' not in session:
+        flash('Acesso negado', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    categoria_repo = CategoriaRepository(db_session)
+    
+    try:
+        categoria_repo.delete(categoria_id)
+        flash('Categoria removida com sucesso!', 'success')
+    except Exception as e:
+        flash(f'Erro ao remover categoria: {str(e)}', 'error')
+    
+    return redirect(url_for('admin_categorias'))
+
+
+# ==================== ROTAS ADMIN - CLIENTES ====================
+
+@app.route('/admin/clientes')
+def admin_clientes():
+    """Gerenciamento de clientes (admin)."""
+    if 'admin_id' not in session:
+        flash('Acesso negado', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    from repositories.cliente_repository import ClienteRepository
+    cliente_repo = ClienteRepository(db_session)
+    clientes = cliente_repo.get_all()
+    
+    return render_template('admin/clientes.html', clientes=clientes)
+
+
+@app.route('/admin/cliente/<int:cliente_id>')
+def admin_cliente_detalhes(cliente_id):
+    """Ver detalhes de um cliente (admin)."""
+    if 'admin_id' not in session:
+        flash('Acesso negado', 'error')
+        return redirect(url_for('login'))
+    
+    db_session = db.get_session()
+    from repositories.cliente_repository import ClienteRepository
+    from repositories.endereco_repository import EnderecoRepository
+    from repositories.pedido_repository import PedidoRepository
+    
+    cliente_repo = ClienteRepository(db_session)
+    endereco_repo = EnderecoRepository(db_session)
+    pedido_repo = PedidoRepository(db_session)
+    
+    cliente = cliente_repo.get_by_id(cliente_id)
+    if not cliente:
+        flash('Cliente não encontrado', 'error')
+        return redirect(url_for('admin_clientes'))
+    
+    enderecos = endereco_repo.get_by_cliente(cliente_id)
+    pedidos = pedido_repo.get_by_cliente(cliente_id)
+    
+    total_gasto = sum(p.total for p in pedidos)
+    
+    return render_template('admin/cliente_detalhes.html', 
+                         cliente=cliente, 
+                         enderecos=enderecos, 
+                         pedidos=pedidos,
+                         total_gasto=total_gasto)
 
 
 if __name__ == '__main__':

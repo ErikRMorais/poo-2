@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Categorias - Admin SCEE{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>Gerenciar Categorias</h1>
+    
+    <div class="admin-actions">
+        <a href="{{ url_for('admin_criar_categoria') }}" class="btn btn-primary">+ Nova Categoria</a>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Voltar ao Dashboard</a>
+    </div>
+    
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td>{{ categoria.id }}</td>
+                <td>{{ categoria.nome }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('admin_editar_categoria', categoria_id=categoria.id) }}" class="btn btn-small btn-warning">Editar</a>
+                    <form method="POST" action="{{ url_for('admin_deletar_categoria', categoria_id=categoria.id) }}" style="display:inline;" 
+                          onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?');">
+                        <button type="submit" class="btn btn-small btn-danger">Deletar</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="text-align:center;">Nenhuma categoria cadastrada</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

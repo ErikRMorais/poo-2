@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{% if categoria %}Editar{% else %}Nova{% endif %} Categoria - Admin SCEE{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1>{% if categoria %}Editar{% else %}Nova{% endif %} Categoria</h1>
+    
+    <form method="POST" class="form-container">
+        <div class="form-group">
+            <label for="nome">Nome da Categoria:</label>
+            <input type="text" id="nome" name="nome" value="{% if categoria %}{{ categoria.nome }}{% endif %}" required>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{{ url_for('admin_categorias') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

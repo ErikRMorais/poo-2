@@ -7,15 +7,39 @@
 
 <div class="conta-container">
     <section class="conta-secao">
+        <h2>Meus Dados</h2>
+        <div class="dados-pessoais">
+            <p><strong>Nome:</strong> {{ cliente.nome }}</p>
+            <p><strong>E-mail:</strong> {{ cliente.email }}</p>
+            <p><strong>CPF:</strong> {{ cliente.cpf }}</p>
+        </div>
+        <div class="conta-acoes">
+            <a href="{{ url_for('editar_perfil') }}" class="btn btn-primary">Editar Perfil</a>
+            <a href="{{ url_for('alterar_senha') }}" class="btn btn-warning">Alterar Senha</a>
+        </div>
+    </section>
+    
+    <section class="conta-secao">
         <h2>Meus Endereços</h2>
+        <a href="{{ url_for('adicionar_endereco') }}" class="btn btn-success">+ Adicionar Endereço</a>
+        
         {% if enderecos %}
         <ul class="endereco-lista">
             {% for endereco in enderecos %}
             <li>
-                {{ endereco.rua }}, {{ endereco.numero }}
-                {% if endereco.complemento %}({{ endereco.complemento }}){% endif %}
-                - {{ endereco.bairro }}, {{ endereco.cidade }}/{{ endereco.estado }}
-                - CEP: {{ endereco.cep }}
+                <div class="endereco-info">
+                    {{ endereco.rua }}, {{ endereco.numero }}
+                    {% if endereco.complemento %}({{ endereco.complemento }}){% endif %}
+                    - {{ endereco.bairro }}, {{ endereco.cidade }}/{{ endereco.estado }}
+                    - CEP: {{ endereco.cep }}
+                </div>
+                <div class="endereco-acoes">
+                    <a href="{{ url_for('editar_endereco', endereco_id=endereco.id) }}" class="btn btn-small btn-warning">Editar</a>
+                    <form method="POST" action="{{ url_for('deletar_endereco', endereco_id=endereco.id) }}" style="display:inline;"
+                          onsubmit="return confirm('Tem certeza que deseja excluir este endereço?');">
+                        <button type="submit" class="btn btn-small btn-danger">Excluir</button>
+                    </form>
+                </div>
             </li>
             {% endfor %}
         </ul>
