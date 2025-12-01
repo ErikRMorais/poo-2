@@ -1,15 +1,18 @@
-# SCEE - Sistema de Comércio Eletrônico de Eletrônicos
+# 🛒 SCEE - Sistema de Comércio Eletrônico
 
-Sistema completo de e-commerce desenvolvido em Python com Flask, seguindo rigorosamente os princípios de Programação Orientada a Objetos (POO) e o padrão arquitetural MVC (Model-View-Controller).
+Sistema completo de e-commerce desenvolvido em Python com Flask, demonstrando na prática os **4 pilares da Programação Orientada a Objetos** e seguindo o padrão arquitetural **MVC** (Model-View-Controller).
 
-## Características Principais
+## ⭐ Características Principais
 
 - **Arquitetura MVC**: Separação clara entre Model, View e Controller
-- **POO Rigorosa**: Encapsulamento, Herança e Polimorfismo aplicados
+- **4 Pilares da POO**: Herança, Polimorfismo, Encapsulamento e Abstração
 - **ORM SQLAlchemy**: Abstração completa do banco de dados
-- **Camada de Repositório**: Isolamento da lógica de persistência
-- **Segurança**: Senhas criptografadas com Argon2 (hash + salt)
-- **Responsivo**: Interface adaptável para desktop e mobile
+- **Padrão Repository**: Isolamento da lógica de persistência
+- **Segurança**: Senhas com Argon2 (vencedor do Password Hashing Competition)
+- **3 Opções de Frete**: Fixo, Correios e Expresso (Polimorfismo)
+- **3 Métodos de Pagamento**: Cartão, Pix e Boleto
+- **Controle de Estoque**: Automático com validações
+- **Interface Responsiva**: Design moderno e adaptável
 
 ## Estrutura do Projeto
 
@@ -38,7 +41,8 @@ scee/
 │   ├── cliente_controller.py
 │   ├── produto_controller.py
 │   ├── carrinho_controller.py
-│   └── pedido_controller.py
+│   ├── pedido_controller.py
+│   └── integracao_controller.py  # Fretes e Pagamentos (Polimorfismo)
 ├── templates/              # Camada View (Templates HTML)
 │   ├── base.html
 │   ├── index.html
@@ -60,8 +64,14 @@ scee/
 │   └── uploads/            # Imagens de produtos
 ├── database.py             # Configuração do banco de dados
 ├── app.py                  # Aplicação Flask principal
+├── init_db.py              # Script de inicialização do BD
 ├── requirements.txt        # Dependências Python
-└── README.md
+├── README.md
+└── docs/                   # Documentação completa
+    ├── DOCUMENTACAO_COMPLETA.md
+    ├── FUNCIONALIDADES_DETALHADAS.md
+    ├── SCRIPT_APRESENTACAO_10MIN.md
+    └── RELATORIO_REVISAO_POO.md
 ```
 
 ## Requisitos
@@ -105,33 +115,61 @@ pip install -r requirements.txt
 
 ## Inicialização
 
-1. Execute a aplicação:
+1. Inicialize o banco de dados:
+
+```bash
+python init_db.py
+```
+
+Isso irá:
+- Criar o banco de dados `scee_loja.db`
+- Criar todas as tabelas
+- Criar categorias padrão
+- Criar admin padrão (`admin@scee.com` / `Admin@123`)
+
+2. Execute a aplicação:
 
 ```bash
 python app.py
 ```
 
-2. Acesse no navegador:
+3. Acesse no navegador:
 
 ```
 http://localhost:5000
+```
+
+4. Área administrativa:
+
+```
+http://localhost:5000/admin
+Login: admin@scee.com
+Senha: Admin@123
 ```
 
 ## Funcionalidades
 
 ### Para Clientes
 
-- **Registro e Login**: Cadastro com validação de CPF, e-mail único e senha forte
-- **Catálogo de Produtos**: Listagem paginada, busca e filtros por categoria/preço
-- **Carrinho de Compras**: Adicionar, remover e atualizar quantidades
-- **Checkout**: Processo em 3 etapas (Identificação, Endereço, Pagamento)
-- **Minha Conta**: Gerenciar perfil, endereços e visualizar pedidos
+- ✅ **Registro e Login**: Cadastro com validação de CPF, e-mail único e senha forte
+- ✅ **Catálogo de Produtos**: Listagem com filtros por categoria e indicadores de estoque
+- ✅ **Carrinho de Compras**: Adicionar, remover e atualizar quantidades
+- ✅ **Checkout Completo**: 
+  - Seleção de endereço de entrega
+  - **3 opções de frete** (Fixo, Correios, Expresso)
+  - **3 métodos de pagamento** (Cartão, Pix, Boleto)
+  - Cálculo automático de frete
+- ✅ **Minha Conta**: Gerenciar perfil, endereços e visualizar pedidos
+- ✅ **Cancelamento de Pedidos**: Pedidos "Pendente" ou "Processando"
+- ✅ **Controle de Estoque**: Produtos sem estoque não podem ser comprados
 
 ### Para Administradores
 
-- **Gerenciamento de Produtos**: CRUD completo com upload de imagens
-- **Gerenciamento de Pedidos**: Visualizar e alterar status dos pedidos
-- **Filtros e Paginação**: Ferramentas para facilitar a administração
+- ✅ **Dashboard**: Estatísticas do sistema
+- ✅ **Gerenciamento de Produtos**: CRUD completo com upload de até 5 imagens
+- ✅ **Gerenciamento de Categorias**: CRUD completo
+- ✅ **Gerenciamento de Pedidos**: Visualizar e alterar status
+- ✅ **Visualização de Clientes**: Lista completa de clientes cadastrados
 
 ## Banco de Dados
 
@@ -154,23 +192,66 @@ O sistema utiliza SQLite com as seguintes tabelas:
 - Proteção contra race conditions no estoque
 - Transações atômicas para criação de pedidos
 
-## Princípios de POO Aplicados
+## 🎓 Princípios de POO Aplicados
 
-### Encapsulamento
+### 1️⃣ Herança
 
-- Atributos privados nas classes
-- Métodos públicos para acesso controlado
-- Separação de responsabilidades
-
-### Herança
-
-- `BaseRepository`: Classe base genérica para repositórios
+- **BaseRepository**: Classe base genérica com CRUD
 - Todos os repositórios herdam de `BaseRepository`
+- Reutilização de código e manutenção centralizada
 
-### Polimorfismo
+```python
+class BaseRepository(Generic[T]):
+    def create(self, entity: T) -> T
+    def get_by_id(self, entity_id: int)
+    def get_all(self) -> List[T]
+    def update(self, entity: T) -> T
+    def delete(self, entity: T) -> None
+```
 
-- Métodos sobrescritos nos repositórios específicos
-- Interface comum para operações CRUD
+### 2️⃣ Polimorfismo ⭐
+
+**Sistema de Frete** (3 implementações):
+
+```python
+class CalculadoraFreteBase(ABC):
+    @abstractmethod
+    def calcular_frete(self, cep, peso, valor) -> tuple[float, int]
+
+class FreteFixo(CalculadoraFreteBase):
+    # R$ 15,00 - 7 dias
+    
+class FreteCorreios(CalculadoraFreteBase):
+    # R$ 15-35 - 5-12 dias (varia por CEP)
+    
+class FreteExpresso(CalculadoraFreteBase):
+    # R$ 30-60 - 2-5 dias (mais rápido)
+```
+
+**Sistema de Pagamento** (2 implementações):
+
+```python
+class GatewayPagamentoBase(ABC):
+    @abstractmethod
+    def processar_pagamento(self, valor, dados) -> tuple[bool, str]
+
+class PagamentoCartao(GatewayPagamentoBase)
+class PagamentoPix(GatewayPagamentoBase)
+```
+
+### 3️⃣ Encapsulamento
+
+- Atributos privados/protegidos nas classes
+- Acesso controlado via métodos públicos
+- Validações internas garantidas
+- Exemplo: `CarrinhoController` com `self.itens` encapsulado
+
+### 4️⃣ Abstração
+
+- Classes abstratas (ABC) definem contratos
+- `CalculadoraFreteBase` e `GatewayPagamentoBase`
+- Subclasses implementam detalhes
+- Interface simples, complexidade escondida
 
 ## Padrão MVC
 
@@ -192,14 +273,37 @@ O sistema utiliza SQLite com as seguintes tabelas:
 - Validações
 - Orquestração entre Model e View
 
-## Testes
+## 📚 Documentação
 
-Para executar testes unitários (quando implementados):
+O projeto possui documentação completa:
 
-```bash
-python -m pytest tests/
-```
+- **DOCUMENTACAO_COMPLETA.md**: Documentação técnica detalhada
+- **FUNCIONALIDADES_DETALHADAS.md**: Análise de cada funcionalidade
+- **SCRIPT_APRESENTACAO_10MIN.md**: Script para apresentação de 10 minutos
+- **RELATORIO_REVISAO_POO.md**: Análise dos conceitos de POO aplicados
 
-## Licença
+## 📊 Estatísticas do Projeto
 
-Este projeto foi desenvolvido para fins educacionais.
+- **Linhas de código**: 3.500+
+- **Arquivos Python**: 28
+- **Templates HTML**: 15
+- **Modelos**: 8
+- **Repositórios**: 7
+- **Controllers**: 6
+- **Classes abstratas**: 2
+- **Implementações polimórficas**: 5
+
+## 🎯 Conceitos Demonstrados
+
+- ✅ **Herança** - BaseRepository genérico
+- ✅ **Polimorfismo** - Fretes e Pagamentos
+- ✅ **Encapsulamento** - Controllers e modelos
+- ✅ **Abstração** - Classes ABC
+- ✅ **Padrão MVC** - Arquitetura em camadas
+- ✅ **Padrão Repository** - Acesso a dados
+- ✅ **Dependency Injection** - Session nos controllers
+- ✅ **Transações Atômicas** - Consistência de dados
+
+## 📝 Licença
+
+Este projeto foi desenvolvido para fins educacionais, demonstrando conceitos de Programação Orientada a Objetos.
