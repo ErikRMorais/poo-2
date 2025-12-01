@@ -39,18 +39,49 @@
         <p>Você não possui endereços cadastrados. <a href="{{ url_for('minha_conta') }}">Adicione um endereço</a></p>
         {% endif %}
         
+        <h2>Tipo de Frete</h2>
+        <div class="form-group frete-opcoes">
+            <label class="frete-opcao">
+                <input type="radio" name="tipo_frete" value="Fixo" required checked>
+                <div class="frete-info">
+                    <strong>📦 Frete Fixo</strong>
+                    <p>R$ 15,00 - Prazo: 7 dias úteis</p>
+                    <small>Grátis para compras acima de R$ 500,00</small>
+                </div>
+            </label>
+            <label class="frete-opcao">
+                <input type="radio" name="tipo_frete" value="Correios" required>
+                <div class="frete-info">
+                    <strong>📮 Correios</strong>
+                    <p>A partir de R$ 15,00 - Prazo: 5 a 12 dias úteis</p>
+                    <small>Valor varia conforme CEP e peso. Grátis acima de R$ 500,00</small>
+                </div>
+            </label>
+            <label class="frete-opcao">
+                <input type="radio" name="tipo_frete" value="Expresso" required>
+                <div class="frete-info">
+                    <strong>⚡ Expresso</strong>
+                    <p>A partir de R$ 30,00 - Prazo: 2 a 5 dias úteis</p>
+                    <small>Entrega rápida! 50% de desconto acima de R$ 500,00</small>
+                </div>
+            </label>
+        </div>
+        
         <h2>Método de Pagamento</h2>
         <div class="form-group">
             <label>
-                <input type="radio" name="metodo_pagamento" value="Cartão" required> Cartão de Crédito
+                <input type="radio" name="metodo_pagamento" value="Cartão" required> 💳 Cartão de Crédito
             </label>
             <label>
-                <input type="radio" name="metodo_pagamento" value="Pix" required> Pix
+                <input type="radio" name="metodo_pagamento" value="Pix" required> 📱 Pix
+            </label>
+            <label>
+                <input type="radio" name="metodo_pagamento" value="Boleto" required> 🧾 Boleto Bancário
             </label>
         </div>
         
         {% if enderecos %}
-        <button type="submit" class="btn btn-primary btn-large">Confirmar Pedido</button>
+        <button type="submit" class="btn btn-primary btn-large">✅ Confirmar Pedido</button>
         {% endif %}
     </form>
 </div>

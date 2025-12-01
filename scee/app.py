@@ -206,15 +206,23 @@ def adicionar_carrinho(produto_id):
     
     if not produto:
         flash('Produto não encontrado', 'error')
+        db_session.close()
         return redirect(url_for('produtos'))
     
+    if produto.estoque == 0:
+        flash('❌ Este produto está SEM ESTOQUE e não pode ser adicionado ao carrinho', 'error')
+        db_session.close()
+        return redirect(url_for('produto_detalhe', produto_id=produto_id))
+    
     if produto.estoque < quantidade:
-        flash('Estoque insuficiente', 'error')
+        flash(f'❌ Estoque insuficiente! Disponível: {produto.estoque} unidades', 'error')
+        db_session.close()
         return redirect(url_for('produto_detalhe', produto_id=produto_id))
     
     carrinho_obj = get_carrinho()
     sucesso, mensagem = carrinho_obj.adicionar_item(produto.id, produto.nome, produto.preco, quantidade)
     flash(mensagem, 'success' if sucesso else 'error')
+    db_session.close()
     
     return redirect(url_for('carrinho'))
 
@@ -260,23 +268,31 @@ def checkout():
     if request.method == 'POST':
         endereco_id = request.form.get('endereco_id', type=int)
         metodo_pagamento = request.form.get('metodo_pagamento')
+        tipo_frete = request.form.get('tipo_frete', 'Fixo')
         
         pedido_controller = PedidoController(db_session)
         itens = carrinho_obj.obter_itens()
         
         sucesso, mensagem, pedido = pedido_controller.criar_pedido(
-            session['cliente_id'], itens, endereco_id, metodo_pagamento
+            cliente_id=session['cliente_id'],
+            itens_carrinho=itens,
+            endereco_id=endereco_id,
+            metodo_pagamento=metodo_pagamento,
+            tipo_frete=tipo_frete
         )
         
         if sucesso:
             carrinho_obj.limpar()
-            flash(f'Pedido #{pedido.id} criado com sucesso!', 'success')
+            flash(f'✅ Pedido #{pedido.id} criado com sucesso! Frete: {tipo_frete}', 'success')
+            db_session.close()
             return redirect(url_for('minha_conta'))
         else:
             flash(mensagem, 'error')
+            db_session.close()
     
     itens = carrinho_obj.obter_itens()
     total = carrinho_obj.calcular_total()
+    db_session.close()
     
     return render_template('checkout.html', enderecos=enderecos, itens=itens, total=total)
 
@@ -392,6 +408,7 @@ def admin_deletar_produto(produto_id):
     db_session = db.get_session()
     produto_controller = ProdutoController(db_session, app.config['UPLOAD_FOLDER'])
     sucesso, mensagem = produto_controller.remover_produto(produto_id)
+    db_session.close()
     
     flash(mensagem, 'success' if sucesso else 'error')
     return redirect(url_for('admin_produtos'))
@@ -599,13 +616,16 @@ def deletar_endereco(endereco_id):
     
     if not endereco or endereco.cliente_id != session['cliente_id']:
         flash('Endereço não encontrado', 'error')
+        db_session.close()
         return redirect(url_for('minha_conta'))
     
     try:
-        endereco_repo.delete(endereco_id)
+        endereco_repo.delete(endereco)
         flash('Endereço removido com sucesso!', 'success')
     except Exception as e:
         flash(f'Erro ao remover endereço: {str(e)}', 'error')
+    finally:
+        db_session.close()
     
     return redirect(url_for('minha_conta'))
 
@@ -622,6 +642,7 @@ def admin_categorias():
     db_session = db.get_session()
     categoria_repo = CategoriaRepository(db_session)
     categorias = categoria_repo.get_all()
+    db_session.close()
     
     return render_template('admin/categorias.html', categorias=categorias)
 
@@ -650,9 +671,12 @@ def admin_criar_categoria():
         try:
             categoria_repo.create(nova_categoria)
             flash('Categoria criada com sucesso!', 'success')
+            db_session.close()
             return redirect(url_for('admin_categorias'))
         except Exception as e:
             flash(f'Erro ao criar categoria: {str(e)}', 'error')
+        finally:
+            db_session.close()
     
     return render_template('admin/categoria_form.html', categoria=None)
 
@@ -670,6 +694,7 @@ def admin_editar_categoria(categoria_id):
     
     if not categoria:
         flash('Categoria não encontrada', 'error')
+        db_session.close()
         return redirect(url_for('admin_categorias'))
     
     if request.method == 'POST':
@@ -679,6 +704,7 @@ def admin_editar_categoria(categoria_id):
         categoria_existente = categoria_repo.get_by_nome(nome)
         if categoria_existente and categoria_existente.id != categoria_id:
             flash('Já existe uma categoria com este nome', 'error')
+            db_session.close()
             return render_template('admin/categoria_form.html', categoria=categoria)
         
         categoria.nome = nome
@@ -686,11 +712,18 @@ def admin_editar_categoria(categoria_id):
         try:
             categoria_repo.update(categoria)
             flash('Categoria atualizada com sucesso!', 'success')
+            db_session.close()
             return redirect(url_for('admin_categorias'))
         except Exception as e:
             flash(f'Erro ao atualizar categoria: {str(e)}', 'error')
+        finally:
+            db_session.close()
+            return render_template('admin/categoria_form.html', categoria=categoria)
     
-    return render_template('admin/categoria_form.html', categoria=categoria)
+    # GET request
+    result = render_template('admin/categoria_form.html', categoria=categoria)
+    db_session.close()
+    return result
 
 
 @app.route('/admin/categoria/deletar/<int:categoria_id>', methods=['POST'])
@@ -704,10 +737,16 @@ def admin_deletar_categoria(categoria_id):
     categoria_repo = CategoriaRepository(db_session)
     
     try:
-        categoria_repo.delete(categoria_id)
-        flash('Categoria removida com sucesso!', 'success')
+        categoria = categoria_repo.get_by_id(categoria_id)
+        if not categoria:
+            flash('Categoria não encontrada', 'error')
+        else:
+            categoria_repo.delete(categoria)
+            flash('Categoria removida com sucesso!', 'success')
     except Exception as e:
         flash(f'Erro ao remover categoria: {str(e)}', 'error')
+    finally:
+        db_session.close()
     
     return redirect(url_for('admin_categorias'))
 

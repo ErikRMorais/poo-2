@@ -19,7 +19,15 @@
         <p class="categoria">Categoria: {{ produto.categoria.nome }}</p>
         <p class="sku">SKU: {{ produto.sku }}</p>
         <p class="preco-grande">R$ {{ "%.2f"|format(produto.preco) }}</p>
-        <p class="estoque">Estoque disponível: {{ produto.estoque }} unidades</p>
+        
+        {% if produto.estoque > 0 %}
+            <p class="estoque-disponivel">✓ Em estoque: {{ produto.estoque }} unidades disponíveis</p>
+        {% else %}
+            <div class="alerta-sem-estoque">
+                <p class="sem-estoque">✗ PRODUTO SEM ESTOQUE</p>
+                <p class="aviso-estoque">Este produto está temporariamente indisponível.</p>
+            </div>
+        {% endif %}
         
         <div class="descricao">
             <h2>Descrição</h2>
@@ -32,10 +40,11 @@
                 <label for="quantidade">Quantidade:</label>
                 <input type="number" id="quantidade" name="quantidade" value="1" min="1" max="{{ produto.estoque }}" required>
             </div>
-            <button type="submit" class="btn btn-primary">Adicionar ao Carrinho</button>
+            <button type="submit" class="btn btn-primary">🛒 Adicionar ao Carrinho</button>
         </form>
         {% else %}
-        <p class="sem-estoque">Produto indisponível</p>
+        <button class="btn btn-disabled" disabled>🛒 Indisponível para Compra</button>
+        <p class="texto-indisponivel">Entre em contato para saber quando este produto estará disponível.</p>
         {% endif %}
     </div>
 </div>

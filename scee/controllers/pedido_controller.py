@@ -27,7 +27,7 @@ class PedidoController:
         self.endereco_repo = EnderecoRepository(session)
     
     def criar_pedido(self, cliente_id: int, itens_carrinho: list, endereco_id: int,
-                    metodo_pagamento: str) -> tuple[bool, str, Pedido]:
+                    metodo_pagamento: str, tipo_frete: str = 'Fixo') -> tuple[bool, str, Pedido]:
         """
         Cria um novo pedido de forma atômica.
         
@@ -35,7 +35,8 @@ class PedidoController:
             cliente_id: ID do cliente.
             itens_carrinho: Lista de itens do carrinho.
             endereco_id: ID do endereço de entrega.
-            metodo_pagamento: Método de pagamento (Cartão/Pix).
+            metodo_pagamento: Método de pagamento (Cartão/Pix/Boleto).
+            tipo_frete: Tipo de frete (Fixo/Correios/Expresso).
             
         Returns:
             Tupla (sucesso, mensagem, pedido).
@@ -43,8 +44,11 @@ class PedidoController:
         if not itens_carrinho:
             return False, "Carrinho vazio", None
         
-        if metodo_pagamento not in ['Cartão', 'Pix']:
+        if metodo_pagamento not in ['Cartão', 'Pix', 'Boleto']:
             return False, "Método de pagamento inválido", None
+        
+        if tipo_frete not in ['Fixo', 'Correios', 'Expresso']:
+            return False, "Tipo de frete inválido", None
         
         endereco = self.endereco_repo.get_by_id(endereco_id)
         if not endereco or endereco.cliente_id != cliente_id:
@@ -81,16 +85,36 @@ class PedidoController:
                 )
                 itens_pedido.append(item_pedido)
             
+            # Calcular frete
+            from controllers.integracao_controller import FreteFixo, FreteCorreios, FreteExpresso
+            
+            if tipo_frete == 'Fixo':
+                calculadora = FreteFixo()
+            elif tipo_frete == 'Correios':
+                calculadora = FreteCorreios()
+            else:  # Expresso
+                calculadora = FreteExpresso()
+            
+            # Peso estimado: 0.5kg por item (simplificado)
+            peso_total = sum(item.quantidade * 0.5 for item in itens_carrinho)
+            valor_frete, prazo_entrega = calculadora.calcular_frete(endereco.cep, peso_total, total)
+            
+            # Atualizar total com frete
+            total_com_frete = total + valor_frete
+            
             endereco_completo = f"{endereco.rua}, {endereco.numero}, {endereco.bairro}, {endereco.cidade}/{endereco.estado}, CEP: {endereco.cep}"
             if endereco.complemento:
                 endereco_completo = f"{endereco.rua}, {endereco.numero} ({endereco.complemento}), {endereco.bairro}, {endereco.cidade}/{endereco.estado}, CEP: {endereco.cep}"
             
             pedido = Pedido(
                 cliente_id=cliente_id,
-                total=total,
+                total=total_com_frete,
                 endereco_entrega=endereco_completo,
                 metodo_pagamento=metodo_pagamento,
-                status='Pendente'
+                status='Pendente',
+                tipo_frete=tipo_frete,
+                valor_frete=valor_frete,
+                prazo_entrega=prazo_entrega
             )
             
             pedido = self.pedido_repo.create(pedido)

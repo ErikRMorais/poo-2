@@ -36,8 +36,13 @@
         <h3>{{ produto.nome }}</h3>
         <p class="categoria">{{ produto.categoria.nome }}</p>
         <p class="preco">R$ {{ "%.2f"|format(produto.preco) }}</p>
-        <p class="estoque">Estoque: {{ produto.estoque }}</p>
-        <a href="{{ url_for('produto_detalhe', produto_id=produto.id) }}" class="btn">Ver Detalhes</a>
+        {% if produto.estoque > 0 %}
+            <p class="estoque-disponivel">✓ Em estoque ({{ produto.estoque }} unidades)</p>
+            <a href="{{ url_for('produto_detalhe', produto_id=produto.id) }}" class="btn">Ver Detalhes</a>
+        {% else %}
+            <p class="sem-estoque">✗ SEM ESTOQUE</p>
+            <a href="{{ url_for('produto_detalhe', produto_id=produto.id) }}" class="btn btn-secondary">Ver Detalhes</a>
+        {% endif %}
     </div>
     {% endfor %}
 </div>

@@ -599,3 +599,126 @@ main {
         padding: 0.5rem;
     }
 }
+
+/* Estilos para Estoque */
+.estoque-disponivel {
+    color: #27ae60;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0.5rem 0;
+}
+
+.sem-estoque {
+    color: #e74c3c;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    text-transform: uppercase;
+}
+
+.alerta-sem-estoque {
+    background-color: #fee;
+    border: 2px solid #e74c3c;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.aviso-estoque {
+    color: #c0392b;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.texto-indisponivel {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+.btn-disabled {
+    background-color: #95a5a6 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.btn-disabled:hover {
+    background-color: #95a5a6 !important;
+    transform: none !important;
+}
+
+/* Produto Card - Estoque */
+.produto-card .sem-estoque {
+    font-size: 0.9rem;
+    background-color: #fee;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.produto-card .estoque-disponivel {
+    font-size: 0.85rem;
+}
+
+/* Estilos para Opções de Frete */
+.frete-opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.frete-opcao {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.frete-opcao:hover {
+    border-color: #3498db;
+    background-color: #f8f9fa;
+}
+
+.frete-opcao input[type="radio"] {
+    margin-top: 0.3rem;
+    cursor: pointer;
+}
+
+.frete-opcao input[type="radio"]:checked + .frete-info {
+    color: #2c3e50;
+}
+
+.frete-opcao:has(input[type="radio"]:checked) {
+    border-color: #3498db;
+    background-color: #e3f2fd;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+.frete-info {
+    flex: 1;
+}
+
+.frete-info strong {
+    display: block;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 0.3rem;
+}
+
+.frete-info p {
+    margin: 0.3rem 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.frete-info small {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    font-style: italic;
+}

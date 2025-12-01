@@ -57,6 +57,7 @@
                     <th>Pedido #</th>
                     <th>Data</th>
                     <th>Status</th>
+                    <th>Frete</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -66,6 +67,14 @@
                     <td>{{ pedido.id }}</td>
                     <td>{{ pedido.data_pedido.strftime('%d/%m/%Y %H:%M') }}</td>
                     <td><span class="status-{{ pedido.status.lower() }}">{{ pedido.status }}</span></td>
+                    <td>
+                        {% if pedido.tipo_frete %}
+                            {{ pedido.tipo_frete }}<br>
+                            <small>R$ {{ "%.2f"|format(pedido.valor_frete or 0) }} - {{ pedido.prazo_entrega or 0 }} dias</small>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
                 </tr>
                 {% endfor %}

@@ -260,6 +260,55 @@ class FreteCorreios(CalculadoraFreteBase):
         return round(valor_base, 2), prazo_base
 
 
+class FreteExpresso(CalculadoraFreteBase):
+    """
+    Implementação de frete expresso (mais rápido e mais caro).
+    
+    Demonstra Polimorfismo: implementação premium com prazo reduzido.
+    """
+    
+    def calcular_frete(self, cep_destino: str, peso_kg: float, valor_produtos: float) -> tuple[float, int]:
+        """
+        Calcula frete expresso com prazo reduzido.
+        
+        Args:
+            cep_destino: CEP de destino.
+            peso_kg: Peso total.
+            valor_produtos: Valor dos produtos.
+            
+        Returns:
+            Tupla (valor_frete, prazo_dias).
+        """
+        # Frete expresso é mais caro mas mais rápido
+        cep_limpo = cep_destino.replace('-', '').replace('.', '')
+        
+        if not cep_limpo.isdigit() or len(cep_limpo) != 8:
+            return 40.0, 3
+        
+        primeiro_digito = int(cep_limpo[0])
+        
+        # Valores mais altos, prazos menores
+        if primeiro_digito <= 3:
+            valor_base = 30.0
+            prazo = 2
+        elif primeiro_digito <= 6:
+            valor_base = 45.0
+            prazo = 3
+        else:
+            valor_base = 60.0
+            prazo = 5
+        
+        # Adicionar custo por peso
+        if peso_kg > 1:
+            valor_base += (peso_kg - 1) * 3.0
+        
+        # Desconto para compras acima de R$ 500 (não grátis, mas com desconto)
+        if valor_produtos >= 500:
+            valor_base *= 0.5  # 50% de desconto
+        
+        return round(valor_base, 2), prazo
+
+
 class IntegracaoController:
     """
     Controller para gerenciar integrações com serviços externos.

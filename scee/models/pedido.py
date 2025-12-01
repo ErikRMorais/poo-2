@@ -31,6 +31,9 @@ class Pedido(Base):
     total = Column(Float, nullable=False)
     endereco_entrega = Column(String(500), nullable=False)
     metodo_pagamento = Column(String(50), nullable=False)
+    tipo_frete = Column(String(50), default='Fixo')
+    valor_frete = Column(Float, default=0.0)
+    prazo_entrega = Column(Integer, default=7)
     
     cliente = relationship('Cliente', back_populates='pedidos')
     itens = relationship('ItemPedido', back_populates='pedido', cascade='all, delete-orphan')
