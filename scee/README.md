@@ -72,26 +72,33 @@ scee/
 ## Instalação
 
 1. Clone ou extraia o projeto:
+
 ```bash
 cd scee
 ```
 
 2. Crie um ambiente virtual:
+
 ```bash
 python -m venv venv
 ```
 
 3. Ative o ambiente virtual:
+
 - Windows:
+
 ```bash
 venv\Scripts\activate
 ```
+
 - Linux/Mac:
+
 ```bash
 source venv/bin/activate
 ```
 
 4. Instale as dependências:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -99,11 +106,13 @@ pip install -r requirements.txt
 ## Inicialização
 
 1. Execute a aplicação:
+
 ```bash
 python app.py
 ```
 
 2. Acesse no navegador:
+
 ```
 http://localhost:5000
 ```
@@ -148,31 +157,37 @@ O sistema utiliza SQLite com as seguintes tabelas:
 ## Princípios de POO Aplicados
 
 ### Encapsulamento
+
 - Atributos privados nas classes
 - Métodos públicos para acesso controlado
 - Separação de responsabilidades
 
 ### Herança
+
 - `BaseRepository`: Classe base genérica para repositórios
 - Todos os repositórios herdam de `BaseRepository`
 
 ### Polimorfismo
+
 - Métodos sobrescritos nos repositórios específicos
 - Interface comum para operações CRUD
 
 ## Padrão MVC
 
 ### Model
+
 - Entidades ORM (SQLAlchemy)
 - Mapeamento objeto-relacional
 - Definição de relacionamentos
 
 ### View
+
 - Templates HTML (Jinja2)
 - CSS responsivo
 - Interface do usuário
 
 ### Controller
+
 - Lógica de negócios
 - Validações
 - Orquestração entre Model e View
@@ -180,6 +195,7 @@ O sistema utiliza SQLite com as seguintes tabelas:
 ## Testes
 
 Para executar testes unitários (quando implementados):
+
 ```bash
 python -m pytest tests/
 ```
