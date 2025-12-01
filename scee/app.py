@@ -539,8 +539,8 @@ def adicionar_endereco():
         db_session = db.get_session()
         cliente_controller = ClienteController(db_session)
         
-        sucesso, mensagem = cliente_controller.adicionar_endereco(
-            session['cliente_id'], cep, rua, numero, complemento, bairro, cidade, estado
+        sucesso, mensagem, endereco = cliente_controller.adicionar_endereco(
+            session['cliente_id'], rua, numero, complemento, bairro, cidade, estado, cep
         )
         
         flash(mensagem, 'success' if sucesso else 'error')
