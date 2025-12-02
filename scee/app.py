@@ -154,19 +154,30 @@ def produtos():
     categoria_repo = CategoriaRepository(db_session)
     categorias = categoria_repo.get_all()
     
+    # Aplicar filtros combinados
     if busca:
         produtos_list = produto_controller.buscar_produtos(busca, page=page)
         total_pages = 1
-    elif min_preco and max_preco:
+    elif categoria_id and (min_preco is not None and max_preco is not None):
+        # Filtro combinado: categoria + preço
+        produtos_list = produto_controller.filtrar_por_categoria_e_preco(
+            categoria_id, min_preco, max_preco, page=page
+        )
+        total_pages = 1
+    elif min_preco is not None and max_preco is not None:
+        # Apenas filtro de preço
         produtos_list = produto_controller.filtrar_por_preco(min_preco, max_preco, page=page)
         total_pages = 1
     elif categoria_id:
+        # Apenas filtro de categoria
         produtos_list, total, total_pages = produto_controller.listar_por_categoria(categoria_id, page=page)
     else:
+        # Sem filtros
         produtos_list, total, total_pages = produto_controller.listar_produtos(page=page)
     
     return render_template('produtos.html', produtos=produtos_list, categorias=categorias,
-                         total_pages=total_pages, current_page=page)
+                         total_pages=total_pages, current_page=page, 
+                         categoria_selecionada=categoria_id, min_preco=min_preco, max_preco=max_preco)
 
 
 @app.route('/produto/<int:produto_id>')

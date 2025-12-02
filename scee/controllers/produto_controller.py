@@ -242,3 +242,23 @@ class ProdutoController:
         """
         offset = (page - 1) * per_page
         return self.produto_repo.filter_by_price_range(min_price, max_price, limit=per_page, offset=offset)
+    
+    def filtrar_por_categoria_e_preco(self, categoria_id: int, min_price: float, max_price: float, 
+                                      page: int = 1, per_page: int = 12):
+        """
+        Filtra produtos por categoria E faixa de preço simultaneamente.
+        
+        Args:
+            categoria_id: ID da categoria.
+            min_price: Preço mínimo.
+            max_price: Preço máximo.
+            page: Número da página.
+            per_page: Itens por página.
+            
+        Returns:
+            Lista de produtos.
+        """
+        offset = (page - 1) * per_page
+        return self.produto_repo.filter_by_categoria_and_price(
+            categoria_id, min_price, max_price, limit=per_page, offset=offset
+        )

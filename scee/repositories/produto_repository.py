@@ -132,3 +132,24 @@ class ProdutoRepository(BaseRepository[Produto]):
             Número de produtos na categoria.
         """
         return self.session.query(Produto).filter(Produto.categoria_id == categoria_id).count()
+    
+    def filter_by_categoria_and_price(self, categoria_id: int, min_price: float, max_price: float, 
+                                      limit: int = 12, offset: int = 0) -> List[Produto]:
+        """
+        Filtra produtos por categoria E faixa de preço simultaneamente.
+        
+        Args:
+            categoria_id: ID da categoria.
+            min_price: Preço mínimo.
+            max_price: Preço máximo.
+            limit: Número máximo de resultados.
+            offset: Deslocamento para paginação.
+            
+        Returns:
+            Lista de produtos que atendem AMBOS os critérios.
+        """
+        return self.session.query(Produto).filter(
+            Produto.categoria_id == categoria_id,
+            Produto.preco >= min_price,
+            Produto.preco <= max_price
+        ).limit(limit).offset(offset).all()
