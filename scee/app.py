@@ -48,6 +48,12 @@ def index():
     categoria_repo = CategoriaRepository(db_session)
     categorias = categoria_repo.get_all()
     
+    # Carregar relacionamentos antes de fechar sessão
+    for produto in produtos:
+        _ = produto.categoria
+        _ = produto.imagens
+    
+    db_session.close()
     return render_template('index.html', produtos=produtos, categorias=categorias, 
                          total_pages=total_pages, current_page=1)
 
@@ -175,6 +181,12 @@ def produtos():
         # Sem filtros
         produtos_list, total, total_pages = produto_controller.listar_produtos(page=page)
     
+    # Carregar categorias de todos os produtos antes de fechar sessão
+    for produto in produtos_list:
+        _ = produto.categoria
+        _ = produto.imagens
+    
+    db_session.close()
     return render_template('produtos.html', produtos=produtos_list, categorias=categorias,
                          total_pages=total_pages, current_page=page, 
                          categoria_selecionada=categoria_id, min_preco=min_preco, max_preco=max_preco)
@@ -190,8 +202,14 @@ def produto_detalhe(produto_id):
     
     if not produto:
         flash('Produto não encontrado', 'error')
+        db_session.close()
         return redirect(url_for('produtos'))
     
+    # Carregar relacionamentos antes de fechar a sessão (eager loading)
+    _ = produto.imagens  # Força carregamento das imagens
+    _ = produto.categoria  # Força carregamento da categoria
+    
+    db_session.close()
     return render_template('produto_detalhe.html', produto=produto)
 
 
@@ -334,6 +352,11 @@ def admin_produtos():
     categoria_repo = CategoriaRepository(db_session)
     categorias = categoria_repo.get_all()
     
+    # Carregar categorias antes de fechar sessão
+    for produto in produtos_list:
+        _ = produto.categoria
+    
+    db_session.close()
     return render_template('admin/produtos.html', produtos=produtos_list, categorias=categorias,
                          total_pages=total_pages, current_page=page)
 
@@ -397,16 +420,40 @@ def admin_editar_produto(produto_id):
         estoque = request.form.get('estoque', type=int)
         categoria_id = request.form.get('categoria_id', type=int)
         
+        # Capturar novas imagens
+        novas_imagens = request.files.getlist('novas_imagens')
+        novas_imagens = [img for img in novas_imagens if img.filename]
+        
         produto_controller = ProdutoController(db_session, app.config['UPLOAD_FOLDER'])
         sucesso, mensagem = produto_controller.atualizar_produto(
-            produto_id, nome, descricao, preco, estoque, categoria_id
+            produto_id, nome, descricao, preco, estoque, categoria_id, novas_imagens
         )
         
         flash(mensagem, 'success' if sucesso else 'error')
+        db_session.close()
         if sucesso:
             return redirect(url_for('admin_produtos'))
+        return redirect(url_for('admin_editar_produto', produto_id=produto_id))
     
+    # Carregar imagens antes de fechar a sessão (eager loading)
+    _ = produto.imagens  # Força o carregamento das imagens
+    
+    db_session.close()
     return render_template('admin/produto_form.html', categorias=categorias, produto=produto)
+
+
+@app.route('/admin/produto/imagem/remover/<int:imagem_id>', methods=['POST'])
+def admin_remover_imagem(imagem_id):
+    """Remover imagem de produto (admin)."""
+    if 'admin_id' not in session:
+        return jsonify({'success': False, 'message': 'Acesso negado'}), 403
+    
+    db_session = db.get_session()
+    produto_controller = ProdutoController(db_session, app.config['UPLOAD_FOLDER'])
+    sucesso, mensagem = produto_controller.remover_imagem(imagem_id)
+    db_session.close()
+    
+    return jsonify({'success': sucesso, 'message': mensagem})
 
 
 @app.route('/admin/produto/deletar/<int:produto_id>', methods=['POST'])

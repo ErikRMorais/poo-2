@@ -304,6 +304,99 @@ O projeto possui documentação completa:
 - ✅ **Dependency Injection** - Session nos controllers
 - ✅ **Transações Atômicas** - Consistência de dados
 
+---
+
+## 🔧 Resolução de Problemas
+
+### Erro: SQLAlchemy com Python 3.13
+
+**Problema:**
+```
+AssertionError: Class <class 'sqlalchemy.sql.elements.SQLCoreOperations'> 
+directly inherits TypingOnly but has additional attributes
+```
+
+**Causa:** Incompatibilidade entre Python 3.13 (muito recente) e SQLAlchemy 2.0.36.
+
+**Solução 1: Downgrade do SQLAlchemy (RECOMENDADO)**
+
+```powershell
+# Ativar ambiente virtual
+venv\Scripts\activate
+
+# Desinstalar SQLAlchemy atual
+pip uninstall sqlalchemy -y
+
+# Instalar versão compatível
+pip install SQLAlchemy==2.0.35
+
+# Executar aplicação
+python app.py
+```
+
+**Solução 2: Usar Python 3.11 ou 3.12**
+
+```powershell
+# Remover ambiente virtual antigo
+Remove-Item -Recurse -Force venv
+
+# Criar novo com Python 3.12
+py -3.12 -m venv venv
+
+# Ativar
+venv\Scripts\activate
+
+# Instalar dependências
+pip install -r requirements.txt
+
+# Executar
+python app.py
+```
+
+### Erro: ModuleNotFoundError: No module named 'database'
+
+**Problema:** Arquivo `database.py` não encontrado.
+
+**Solução:** O arquivo já está criado. Tente:
+
+```powershell
+# Limpar cache do Python
+Remove-Item -Recurse -Force __pycache__
+
+# Fechar e reabrir terminal
+# Executar novamente
+python app.py
+```
+
+### Erro: Filtros não funcionam corretamente
+
+**Problema:** Ao selecionar categoria + preço, mostra produtos de todas as categorias.
+
+**Solução:** Já corrigido na versão atual. Se persistir:
+
+1. Verifique se está usando a versão mais recente do código
+2. Reinicie o servidor Flask (`CTRL+C` e `python app.py`)
+3. Limpe o cache do navegador (`CTRL+SHIFT+DEL`)
+
+### Erro: Banco de dados não inicializado
+
+**Problema:** Tabelas não existem ou admin não foi criado.
+
+**Solução:**
+
+```powershell
+# Executar script de inicialização
+python init_db.py
+```
+
+Isso irá:
+- Criar banco `scee_loja.db`
+- Criar todas as tabelas
+- Criar categorias padrão
+- Criar admin: `admin@scee.com` / `Admin@123`
+
+---
+
 ## 📝 Licença
 
 Este projeto foi desenvolvido para fins educacionais, demonstrando conceitos de Programação Orientada a Objetos.

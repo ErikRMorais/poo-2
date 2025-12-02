@@ -20,6 +20,7 @@
 10. [Banco de Dados](#banco-de-dados)
 11. [Segurança](#segurança)
 12. [Como Executar](#como-executar)
+13. [Resolução de Problemas](#resolução-de-problemas)
 
 ---
 
@@ -1026,6 +1027,204 @@ http://localhost:5000
 **Área Admin:**
 ```
 http://localhost:5000/admin
+```
+
+---
+
+## 🔧 RESOLUÇÃO DE PROBLEMAS
+
+### ⚠️ Erro: SQLAlchemy com Python 3.13
+
+**Sintoma:**
+```
+AssertionError: Class <class 'sqlalchemy.sql.elements.SQLCoreOperations'> 
+directly inherits TypingOnly but has additional attributes 
+{'__firstlineno__', '__static_attributes__'}.
+```
+
+**Causa:**  
+Incompatibilidade entre **Python 3.13** (lançado em outubro de 2024) e **SQLAlchemy 2.0.36**. O Python 3.13 é muito recente e o SQLAlchemy ainda não está totalmente compatível.
+
+**Solução 1: Downgrade do SQLAlchemy (MAIS RÁPIDO) ✅**
+
+```powershell
+# 1. Ativar ambiente virtual
+venv\Scripts\activate
+
+# 2. Desinstalar SQLAlchemy atual
+pip uninstall sqlalchemy -y
+
+# 3. Instalar versão compatível
+pip install SQLAlchemy==2.0.35
+
+# 4. Executar aplicação
+python app.py
+```
+
+**Solução 2: Usar Python 3.11 ou 3.12 (ALTERNATIVA)**
+
+```powershell
+# 1. Remover ambiente virtual antigo
+Remove-Item -Recurse -Force venv
+
+# 2. Criar novo com Python 3.12
+py -3.12 -m venv venv
+
+# 3. Ativar
+venv\Scripts\activate
+
+# 4. Instalar dependências
+pip install -r requirements.txt
+
+# 5. Inicializar banco
+python init_db.py
+
+# 6. Executar
+python app.py
+```
+
+**Versões Recomendadas:**
+- ✅ Python 3.11.x
+- ✅ Python 3.12.x
+- ✅ SQLAlchemy 2.0.35
+
+---
+
+### ⚠️ Erro: ModuleNotFoundError: No module named 'database'
+
+**Sintoma:**
+```
+ModuleNotFoundError: No module named 'database'
+```
+
+**Causa:**  
+Arquivo `database.py` não encontrado ou cache do Python desatualizado.
+
+**Solução:**
+
+```powershell
+# 1. Verificar se arquivo existe
+dir database.py
+
+# 2. Limpar cache do Python
+Remove-Item -Recurse -Force __pycache__
+
+# 3. Fechar e reabrir terminal
+
+# 4. Executar novamente
+python app.py
+```
+
+Se o arquivo não existir, ele já foi recriado na versão atual do projeto.
+
+---
+
+### ⚠️ Erro: Filtros de Categoria + Preço não funcionam
+
+**Sintoma:**  
+Ao selecionar uma categoria e aplicar filtro de preço, o sistema mostra produtos de todas as categorias naquela faixa de preço, ignorando a categoria selecionada.
+
+**Causa:**  
+Lógica de filtros usando `elif` em vez de aplicar ambos os filtros simultaneamente.
+
+**Solução:**  
+Já corrigido na versão atual. Se o problema persistir:
+
+1. Verifique se está usando a versão mais recente do código
+2. Reinicie o servidor Flask:
+   ```powershell
+   # Parar servidor (CTRL+C)
+   # Executar novamente
+   python app.py
+   ```
+3. Limpe o cache do navegador (`CTRL+SHIFT+DEL`)
+
+**Arquivos corrigidos:**
+- `app.py` - Lógica de filtros combinados
+- `controllers/produto_controller.py` - Método `filtrar_por_categoria_e_preco()`
+- `repositories/produto_repository.py` - Query combinada
+
+---
+
+### ⚠️ Erro: Banco de dados não inicializado
+
+**Sintoma:**
+```
+sqlalchemy.exc.OperationalError: no such table: clientes
+```
+
+**Causa:**  
+Banco de dados não foi inicializado ou tabelas não foram criadas.
+
+**Solução:**
+
+```powershell
+# Executar script de inicialização
+python init_db.py
+```
+
+**Isso irá:**
+- ✅ Criar banco `scee_loja.db`
+- ✅ Criar todas as tabelas
+- ✅ Criar 8 categorias padrão
+- ✅ Criar admin: `admin@scee.com` / `Admin@123`
+
+---
+
+### ⚠️ Erro: Porta 5000 já em uso
+
+**Sintoma:**
+```
+OSError: [WinError 10048] Only one usage of each socket address is normally permitted
+```
+
+**Causa:**  
+Outra aplicação está usando a porta 5000.
+
+**Solução 1: Parar processo existente**
+
+```powershell
+# Encontrar processo na porta 5000
+netstat -ano | findstr :5000
+
+# Matar processo (substitua PID pelo número encontrado)
+taskkill /PID <PID> /F
+```
+
+**Solução 2: Usar outra porta**
+
+Editar `app.py` (última linha):
+```python
+# ANTES
+app.run(debug=True, host='0.0.0.0')
+
+# DEPOIS
+app.run(debug=True, host='0.0.0.0', port=5001)
+```
+
+---
+
+### ⚠️ Erro: Dependências não instaladas
+
+**Sintoma:**
+```
+ModuleNotFoundError: No module named 'flask'
+```
+
+**Causa:**  
+Ambiente virtual não ativado ou dependências não instaladas.
+
+**Solução:**
+
+```powershell
+# 1. Ativar ambiente virtual
+venv\Scripts\activate
+
+# 2. Instalar dependências
+pip install -r requirements.txt
+
+# 3. Verificar instalação
+pip list
 ```
 
 ---

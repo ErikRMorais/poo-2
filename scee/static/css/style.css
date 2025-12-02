@@ -722,3 +722,206 @@ main {
     font-size: 0.85rem;
     font-style: italic;
 }
+
+/* Gerenciamento de Imagens de Produtos */
+.imagens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.imagem-item {
+    position: relative;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.imagem-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.imagem-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.btn-remover-imagem {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(231, 76, 60, 0.9);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.btn-remover-imagem:hover {
+    background: rgba(192, 57, 43, 1);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: #7f8c8d;
+    font-size: 0.85rem;
+}
+
+/* Carrossel de Imagens */
+.carrossel-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.carrossel-principal {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.carrossel-slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+    animation: fadeIn 0.5s;
+}
+
+.carrossel-slide.active {
+    display: block;
+}
+
+.carrossel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #fff;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Botões de Navegação */
+.carrossel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 16px 20px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.3s;
+    z-index: 10;
+    border-radius: 4px;
+}
+
+.carrossel-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.carrossel-btn.prev {
+    left: 10px;
+}
+
+.carrossel-btn.next {
+    right: 10px;
+}
+
+/* Miniaturas */
+.carrossel-miniaturas {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.miniatura {
+    width: 80px;
+    height: 80px;
+    border: 3px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0.6;
+}
+
+.miniatura:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.miniatura.active {
+    border-color: #3498db;
+    opacity: 1;
+}
+
+.miniatura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Indicadores */
+.carrossel-indicadores {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.indicador {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.indicador:hover {
+    background: #bbb;
+}
+
+.indicador.active {
+    background: #3498db;
+    width: 30px;
+    border-radius: 6px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .carrossel-principal {
+        height: 350px;
+    }
+    
+    .carrossel-btn {
+        padding: 12px 16px;
+        font-size: 20px;
+    }
+    
+    .miniatura {
+        width: 60px;
+        height: 60px;
+    }
+}

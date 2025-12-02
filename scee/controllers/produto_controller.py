@@ -119,7 +119,7 @@ class ProdutoController:
         self.session.commit()
     
     def atualizar_produto(self, produto_id: int, nome: str, descricao: str, preco: float,
-                         estoque: int, categoria_id: int) -> tuple[bool, str]:
+                         estoque: int, categoria_id: int, novas_imagens: list = None) -> tuple[bool, str]:
         """
         Atualiza um produto existente.
         
@@ -130,6 +130,7 @@ class ProdutoController:
             preco: Preço unitário.
             estoque: Quantidade em estoque.
             categoria_id: ID da categoria.
+            novas_imagens: Lista opcional de novas imagens para adicionar.
             
         Returns:
             Tupla (sucesso, mensagem).
@@ -158,6 +159,11 @@ class ProdutoController:
         produto.categoria_id = categoria_id
         
         self.produto_repo.update(produto)
+        
+        # Adicionar novas imagens se fornecidas
+        if novas_imagens:
+            self._adicionar_imagens(produto, novas_imagens)
+        
         return True, "Produto atualizado com sucesso"
     
     def remover_produto(self, produto_id: int) -> tuple[bool, str]:
@@ -262,3 +268,70 @@ class ProdutoController:
         return self.produto_repo.filter_by_categoria_and_price(
             categoria_id, min_price, max_price, limit=per_page, offset=offset
         )
+    
+    def _adicionar_imagens(self, produto: Produto, imagens: list) -> None:
+        """
+        Adiciona novas imagens a um produto existente.
+        
+        Args:
+            produto: Produto.
+            imagens: Lista de arquivos de imagem.
+        """
+        # Contar imagens existentes
+        imagens_existentes = len(produto.imagens)
+        
+        # Calcular quantas imagens podemos adicionar
+        espaco_disponivel = self.MAX_IMAGES - imagens_existentes
+        
+        if espaco_disponivel <= 0:
+            return  # Já tem 5 imagens
+        
+        # Adicionar novas imagens
+        for i, imagem in enumerate(imagens[:espaco_disponivel]):
+            if imagem and self.validar_extensao(imagem.filename):
+                ordem = imagens_existentes + i
+                filename = secure_filename(f"{produto.sku}_{ordem}_{imagem.filename}")
+                filepath = os.path.join(self.upload_folder, filename)
+                imagem.save(filepath)
+                
+                caminho_relativo = f"uploads/{filename}"
+                
+                img_produto = ImagemProduto(
+                    produto_id=produto.id,
+                    caminho=caminho_relativo,
+                    ordem=ordem
+                )
+                self.session.add(img_produto)
+        
+        self.session.commit()
+    
+    def remover_imagem(self, imagem_id: int) -> tuple[bool, str]:
+        """
+        Remove uma imagem de produto.
+        
+        Args:
+            imagem_id: ID da imagem.
+            
+        Returns:
+            Tupla (sucesso, mensagem).
+        """
+        imagem = self.session.query(ImagemProduto).filter(
+            ImagemProduto.id == imagem_id
+        ).first()
+        
+        if not imagem:
+            return False, "Imagem não encontrada"
+        
+        # Remover arquivo físico
+        try:
+            filepath = os.path.join('static', imagem.caminho)
+            if os.path.exists(filepath):
+                os.remove(filepath)
+        except Exception as e:
+            print(f"Erro ao remover arquivo: {e}")
+        
+        # Remover do banco
+        self.session.delete(imagem)
+        self.session.commit()
+        
+        return True, "Imagem removida com sucesso"

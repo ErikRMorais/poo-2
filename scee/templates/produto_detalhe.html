@@ -6,9 +6,42 @@
 <div class="produto-detalhe">
     <div class="produto-imagens">
         {% if produto.imagens %}
-            {% for imagem in produto.imagens %}
-            <img src="{{ url_for('static', filename=imagem.caminho) }}" alt="{{ produto.nome }}">
-            {% endfor %}
+        <!-- Carrossel de Imagens -->
+        <div class="carrossel-container">
+            <div class="carrossel-principal">
+                {% for imagem in produto.imagens %}
+                <div class="carrossel-slide {% if loop.first %}active{% endif %}" data-slide="{{ loop.index0 }}">
+                    <img src="{{ url_for('static', filename=imagem.caminho) }}" alt="{{ produto.nome }}">
+                </div>
+                {% endfor %}
+                
+                <!-- Botões de Navegação -->
+                {% if produto.imagens|length > 1 %}
+                <button class="carrossel-btn prev" onclick="mudarSlide(-1)">❮</button>
+                <button class="carrossel-btn next" onclick="mudarSlide(1)">❯</button>
+                {% endif %}
+            </div>
+            
+            <!-- Miniaturas -->
+            {% if produto.imagens|length > 1 %}
+            <div class="carrossel-miniaturas">
+                {% for imagem in produto.imagens %}
+                <div class="miniatura {% if loop.first %}active{% endif %}" onclick="irParaSlide({{ loop.index0 }})">
+                    <img src="{{ url_for('static', filename=imagem.caminho) }}" alt="{{ produto.nome }}">
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Indicadores -->
+            {% if produto.imagens|length > 1 %}
+            <div class="carrossel-indicadores">
+                {% for imagem in produto.imagens %}
+                <span class="indicador {% if loop.first %}active{% endif %}" onclick="irParaSlide({{ loop.index0 }})"></span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
         {% else %}
             <div class="produto-sem-imagem-grande">Sem imagem</div>
         {% endif %}
@@ -48,4 +81,56 @@
         {% endif %}
     </div>
 </div>
+
+{% if produto.imagens and produto.imagens|length > 1 %}
+<script>
+let slideAtual = 0;
+const totalSlides = {{ produto.imagens|length }};
+
+function mostrarSlide(n) {
+    const slides = document.querySelectorAll('.carrossel-slide');
+    const miniaturas = document.querySelectorAll('.miniatura');
+    const indicadores = document.querySelectorAll('.indicador');
+    
+    // Ajustar índice
+    if (n >= totalSlides) {
+        slideAtual = 0;
+    } else if (n < 0) {
+        slideAtual = totalSlides - 1;
+    } else {
+        slideAtual = n;
+    }
+    
+    // Remover classe active de todos
+    slides.forEach(slide => slide.classList.remove('active'));
+    miniaturas.forEach(mini => mini.classList.remove('active'));
+    indicadores.forEach(ind => ind.classList.remove('active'));
+    
+    // Adicionar classe active ao slide atual
+    slides[slideAtual].classList.add('active');
+    miniaturas[slideAtual].classList.add('active');
+    indicadores[slideAtual].classList.add('active');
+}
+
+function mudarSlide(direcao) {
+    mostrarSlide(slideAtual + direcao);
+}
+
+function irParaSlide(n) {
+    mostrarSlide(n);
+}
+
+// Navegação por teclado
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') {
+        mudarSlide(-1);
+    } else if (e.key === 'ArrowRight') {
+        mudarSlide(1);
+    }
+});
+
+// Auto-play (opcional - descomente para ativar)
+// setInterval(() => mudarSlide(1), 5000);
+</script>
+{% endif %}
 {% endblock %}

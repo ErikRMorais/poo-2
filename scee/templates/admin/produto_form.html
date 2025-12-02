@@ -47,11 +47,72 @@
     {% if not produto %}
     <div class="form-group">
         <label for="imagens">Imagens (máx. 5, 2MB cada):</label>
-        <input type="file" id="imagens" name="imagens" accept="image/jpeg,image/png" multiple>
+        <input type="file" id="imagens" name="imagens" accept="image/jpeg,image/png,image/jpg" multiple>
+        <small>Formatos aceitos: JPG, JPEG, PNG</small>
     </div>
+    {% else %}
+    <!-- Gerenciamento de imagens existentes -->
+    <div class="form-group">
+        <label>Imagens Atuais:</label>
+        <div class="imagens-grid">
+            {% if produto.imagens %}
+                {% for imagem in produto.imagens %}
+                <div class="imagem-item" id="imagem-{{ imagem.id }}">
+                    <img src="{{ url_for('static', filename=imagem.caminho) }}" alt="Imagem do produto">
+                    <button type="button" class="btn-remover-imagem" onclick="removerImagem({{ imagem.id }})">
+                        ✕ Remover
+                    </button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>Nenhuma imagem cadastrada</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if produto.imagens|length < 5 %}
+    <div class="form-group">
+        <label for="novas_imagens">Adicionar Novas Imagens (máx. {{ 5 - produto.imagens|length }}):</label>
+        <input type="file" id="novas_imagens" name="novas_imagens" accept="image/jpeg,image/png,image/jpg" multiple>
+        <small>Você pode adicionar até {{ 5 - produto.imagens|length }} imagem(ns). Formatos: JPG, JPEG, PNG</small>
+    </div>
+    {% endif %}
     {% endif %}
     
     <button type="submit" class="btn btn-primary">Salvar</button>
     <a href="{{ url_for('admin_produtos') }}" class="btn">Cancelar</a>
 </form>
+
+{% if produto %}
+<script>
+function removerImagem(imagemId) {
+    if (!confirm('Tem certeza que deseja remover esta imagem?')) {
+        return;
+    }
+    
+    fetch(`/admin/produto/imagem/remover/${imagemId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remover elemento da página
+            document.getElementById(`imagem-${imagemId}`).remove();
+            alert(data.message);
+            // Recarregar página para atualizar contador
+            location.reload();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao remover imagem');
+        console.error(error);
+    });
+}
+</script>
+{% endif %}
 {% endblock %}
