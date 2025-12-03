@@ -2,7 +2,6 @@
 
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from werkzeug.utils import secure_filename
 from database import Database
 from controllers.auth_controller import AuthController
 from controllers.cliente_controller import ClienteController
@@ -10,7 +9,6 @@ from controllers.produto_controller import ProdutoController
 from controllers.carrinho_controller import CarrinhoController
 from controllers.pedido_controller import PedidoController
 from repositories.categoria_repository import CategoriaRepository
-from argon2 import PasswordHasher
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)

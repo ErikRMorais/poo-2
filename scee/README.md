@@ -1,402 +1,343 @@
 # 🛒 SCEE - Sistema de Comércio Eletrônico
 
-Sistema completo de e-commerce desenvolvido em Python com Flask, demonstrando na prática os **4 pilares da Programação Orientada a Objetos** e seguindo o padrão arquitetural **MVC** (Model-View-Controller).
+Sistema completo de e-commerce desenvolvido em Python com Flask, demonstrando os **4 pilares da Programação Orientada a Objetos**.
 
-## ⭐ Características Principais
+---
 
-- **Arquitetura MVC**: Separação clara entre Model, View e Controller
-- **4 Pilares da POO**: Herança, Polimorfismo, Encapsulamento e Abstração
-- **ORM SQLAlchemy**: Abstração completa do banco de dados
-- **Padrão Repository**: Isolamento da lógica de persistência
-- **Segurança**: Senhas com Argon2 (vencedor do Password Hashing Competition)
-- **3 Opções de Frete**: Fixo, Correios e Expresso (Polimorfismo)
-- **3 Métodos de Pagamento**: Cartão, Pix e Boleto
-- **Controle de Estoque**: Automático com validações
-- **Interface Responsiva**: Design moderno e adaptável
+## 📋 Informações do Projeto
 
-## Estrutura do Projeto
+**Linguagem:** Python 3.11+  
+**Framework:** Flask 3.1.0  
+**Banco de Dados:** SQLite  
+**Padrão Arquitetural:** MVC (Model-View-Controller)
+
+---
+
+## ⭐ Funcionalidades
+
+### Para Clientes:
+- ✅ Registro e login com validação
+- ✅ Catálogo de produtos com filtros
+- ✅ Carrinho de compras
+- ✅ Checkout com 3 opções de frete
+- ✅ Gerenciamento de perfil e endereços
+- ✅ Histórico de pedidos
+
+### Para Administradores:
+- ✅ Dashboard administrativo
+- ✅ CRUD de produtos (com até 5 imagens)
+- ✅ CRUD de categorias
+- ✅ Gerenciamento de pedidos
+- ✅ Visualização de clientes
+
+---
+
+## 🎓 Conceitos de POO Aplicados
+
+### 1. **Herança**
+```python
+# BaseRepository (classe pai)
+class BaseRepository(Generic[T]):
+    def create(self, entity: T)
+    def get_by_id(self, entity_id: int)
+    def get_all(self) -> List[T]
+
+# Repositórios específicos herdam
+class ProdutoRepository(BaseRepository[Produto])
+class ClienteRepository(BaseRepository[Cliente])
+```
+
+### 2. **Polimorfismo**
+```python
+# Classes abstratas para fretes
+class CalculadoraFreteBase(ABC):
+    @abstractmethod
+    def calcular_frete(self, cep, peso, valor)
+
+# Implementações diferentes
+class FreteFixo(CalculadoraFreteBase)      # R$ 15,00 - 7 dias
+class FreteCorreios(CalculadoraFreteBase)  # R$ 15-35 - 5-12 dias
+class FreteExpresso(CalculadoraFreteBase)  # R$ 30-60 - 2-5 dias
+```
+
+### 3. **Encapsulamento**
+```python
+# Lógica encapsulada nos controllers
+class CarrinhoController:
+    def __init__(self):
+        self.itens = {}  # Atributo privado
+    
+    def adicionar_item(self, produto_id, nome, preco, quantidade):
+        # Lógica interna protegida
+```
+
+### 4. **Abstração**
+```python
+# Interface abstrata para pagamentos
+class GatewayPagamentoBase(ABC):
+    @abstractmethod
+    def processar_pagamento(self, valor, dados)
+
+# Implementações concretas
+class PagamentoCartao(GatewayPagamentoBase)
+class PagamentoPix(GatewayPagamentoBase)
+```
+
+---
+
+## 📁 Estrutura do Projeto
 
 ```
 scee/
-├── models/                 # Camada Model (Entidades ORM)
+├── models/                 # Modelos (Entidades do banco)
 │   ├── base.py
 │   ├── cliente.py
-│   ├── admin.py
-│   ├── endereco.py
-│   ├── categoria.py
 │   ├── produto.py
-│   ├── imagem_produto.py
 │   ├── pedido.py
-│   └── item_pedido.py
-├── repositories/           # Camada de Repositório
+│   └── ...
+├── repositories/           # Acesso a dados (Padrão Repository)
 │   ├── base_repository.py
-│   ├── cliente_repository.py
-│   ├── admin_repository.py
 │   ├── produto_repository.py
-│   ├── categoria_repository.py
-│   ├── endereco_repository.py
-│   └── pedido_repository.py
-├── controllers/            # Camada Controller (Lógica de Negócios)
+│   └── ...
+├── controllers/            # Lógica de negócios
 │   ├── auth_controller.py
-│   ├── cliente_controller.py
 │   ├── produto_controller.py
-│   ├── carrinho_controller.py
 │   ├── pedido_controller.py
-│   └── integracao_controller.py  # Fretes e Pagamentos (Polimorfismo)
-├── templates/              # Camada View (Templates HTML)
-│   ├── base.html
-│   ├── index.html
-│   ├── registro.html
-│   ├── login.html
-│   ├── produtos.html
-│   ├── produto_detalhe.html
-│   ├── carrinho.html
-│   ├── checkout.html
-│   ├── minha_conta.html
-│   └── admin/
-│       ├── dashboard.html
-│       ├── produtos.html
-│       ├── produto_form.html
-│       └── pedidos.html
-├── static/
-│   ├── css/
-│   │   └── style.css
-│   └── uploads/            # Imagens de produtos
-├── database.py             # Configuração do banco de dados
-├── app.py                  # Aplicação Flask principal
-├── init_db.py              # Script de inicialização do BD
-├── requirements.txt        # Dependências Python
-├── README.md
-└── docs/                   # Documentação completa
-    ├── DOCUMENTACAO_COMPLETA.md
-    ├── FUNCIONALIDADES_DETALHADAS.md
-    ├── SCRIPT_APRESENTACAO_10MIN.md
-    └── RELATORIO_REVISAO_POO.md
+│   └── integracao_controller.py
+├── templates/              # Views (HTML)
+├── static/                 # CSS, JS, Imagens
+├── app.py                  # Aplicação Flask (Rotas)
+├── database.py             # Configuração do banco
+├── init_db.py              # Script de inicialização
+└── requirements.txt        # Dependências
 ```
 
-## Requisitos
+---
 
-- Python 3.10 ou superior
-- SQLite 3 ou superior
+## 🚀 Instalação e Execução
 
-## Instalação
+### 1. **Pré-requisitos**
+- Python 3.11 ou 3.12 (recomendado)
+- pip (gerenciador de pacotes)
 
-1. Clone ou extraia o projeto:
-
+### 2. **Clonar/Baixar o Projeto**
 ```bash
 cd scee
 ```
 
-2. Crie um ambiente virtual:
-
+### 3. **Criar Ambiente Virtual**
 ```bash
 python -m venv venv
 ```
 
-3. Ative o ambiente virtual:
+### 4. **Ativar Ambiente Virtual**
 
-- Windows:
-
+**Windows:**
 ```bash
 venv\Scripts\activate
 ```
 
-- Linux/Mac:
-
+**Linux/Mac:**
 ```bash
 source venv/bin/activate
 ```
 
-4. Instale as dependências:
-
+### 5. **Instalar Dependências**
 ```bash
 pip install -r requirements.txt
 ```
 
-## Inicialização
-
-1. Inicialize o banco de dados:
-
+### 6. **Inicializar Banco de Dados**
 ```bash
 python init_db.py
 ```
 
-Isso irá:
-- Criar o banco de dados `scee_loja.db`
+**Isso irá:**
+- Criar o banco `scee_loja.db`
 - Criar todas as tabelas
-- Criar categorias padrão
-- Criar admin padrão (`admin@scee.com` / `Admin@123`)
+- Criar 10 categorias padrão
+- Criar usuário admin: `admin@scee.com` / `Admin@123`
 
-2. Execute a aplicação:
-
+### 7. **Executar Aplicação**
 ```bash
 python app.py
 ```
 
-3. Acesse no navegador:
-
+### 8. **Acessar no Navegador**
 ```
 http://localhost:5000
 ```
 
-4. Área administrativa:
-
+**Área Admin:**
 ```
 http://localhost:5000/admin
 Login: admin@scee.com
 Senha: Admin@123
 ```
 
-## Funcionalidades
-
-### Para Clientes
-
-- ✅ **Registro e Login**: Cadastro com validação de CPF, e-mail único e senha forte
-- ✅ **Catálogo de Produtos**: Listagem com filtros por categoria e indicadores de estoque
-- ✅ **Carrinho de Compras**: Adicionar, remover e atualizar quantidades
-- ✅ **Checkout Completo**: 
-  - Seleção de endereço de entrega
-  - **3 opções de frete** (Fixo, Correios, Expresso)
-  - **3 métodos de pagamento** (Cartão, Pix, Boleto)
-  - Cálculo automático de frete
-- ✅ **Minha Conta**: Gerenciar perfil, endereços e visualizar pedidos
-- ✅ **Cancelamento de Pedidos**: Pedidos "Pendente" ou "Processando"
-- ✅ **Controle de Estoque**: Produtos sem estoque não podem ser comprados
-
-### Para Administradores
-
-- ✅ **Dashboard**: Estatísticas do sistema
-- ✅ **Gerenciamento de Produtos**: CRUD completo com upload de até 5 imagens
-- ✅ **Gerenciamento de Categorias**: CRUD completo
-- ✅ **Gerenciamento de Pedidos**: Visualizar e alterar status
-- ✅ **Visualização de Clientes**: Lista completa de clientes cadastrados
-
-## Banco de Dados
-
-O sistema utiliza SQLite com as seguintes tabelas:
-
-- `clientes`: Dados dos clientes
-- `admins`: Dados dos administradores
-- `enderecos`: Endereços de entrega
-- `categorias`: Categorias de produtos
-- `produtos`: Catálogo de produtos
-- `imagens_produto`: Imagens dos produtos
-- `pedidos`: Pedidos realizados
-- `itens_pedido`: Itens de cada pedido
-
-## Segurança
-
-- Senhas criptografadas com Argon2 (hash + salt)
-- Validação de CPF com dígitos verificadores
-- Validação de e-mail único
-- Proteção contra race conditions no estoque
-- Transações atômicas para criação de pedidos
-
-## 🎓 Princípios de POO Aplicados
-
-### 1️⃣ Herança
-
-- **BaseRepository**: Classe base genérica com CRUD
-- Todos os repositórios herdam de `BaseRepository`
-- Reutilização de código e manutenção centralizada
-
-```python
-class BaseRepository(Generic[T]):
-    def create(self, entity: T) -> T
-    def get_by_id(self, entity_id: int)
-    def get_all(self) -> List[T]
-    def update(self, entity: T) -> T
-    def delete(self, entity: T) -> None
-```
-
-### 2️⃣ Polimorfismo ⭐
-
-**Sistema de Frete** (3 implementações):
-
-```python
-class CalculadoraFreteBase(ABC):
-    @abstractmethod
-    def calcular_frete(self, cep, peso, valor) -> tuple[float, int]
-
-class FreteFixo(CalculadoraFreteBase):
-    # R$ 15,00 - 7 dias
-    
-class FreteCorreios(CalculadoraFreteBase):
-    # R$ 15-35 - 5-12 dias (varia por CEP)
-    
-class FreteExpresso(CalculadoraFreteBase):
-    # R$ 30-60 - 2-5 dias (mais rápido)
-```
-
-**Sistema de Pagamento** (2 implementações):
-
-```python
-class GatewayPagamentoBase(ABC):
-    @abstractmethod
-    def processar_pagamento(self, valor, dados) -> tuple[bool, str]
-
-class PagamentoCartao(GatewayPagamentoBase)
-class PagamentoPix(GatewayPagamentoBase)
-```
-
-### 3️⃣ Encapsulamento
-
-- Atributos privados/protegidos nas classes
-- Acesso controlado via métodos públicos
-- Validações internas garantidas
-- Exemplo: `CarrinhoController` com `self.itens` encapsulado
-
-### 4️⃣ Abstração
-
-- Classes abstratas (ABC) definem contratos
-- `CalculadoraFreteBase` e `GatewayPagamentoBase`
-- Subclasses implementam detalhes
-- Interface simples, complexidade escondida
-
-## Padrão MVC
-
-### Model
-
-- Entidades ORM (SQLAlchemy)
-- Mapeamento objeto-relacional
-- Definição de relacionamentos
-
-### View
-
-- Templates HTML (Jinja2)
-- CSS responsivo
-- Interface do usuário
-
-### Controller
-
-- Lógica de negócios
-- Validações
-- Orquestração entre Model e View
-
-## 📚 Documentação
-
-O projeto possui documentação completa:
-
-- **DOCUMENTACAO_COMPLETA.md**: Documentação técnica detalhada
-- **FUNCIONALIDADES_DETALHADAS.md**: Análise de cada funcionalidade
-- **SCRIPT_APRESENTACAO_10MIN.md**: Script para apresentação de 10 minutos
-- **RELATORIO_REVISAO_POO.md**: Análise dos conceitos de POO aplicados
-
-## 📊 Estatísticas do Projeto
-
-- **Linhas de código**: 3.500+
-- **Arquivos Python**: 28
-- **Templates HTML**: 15
-- **Modelos**: 8
-- **Repositórios**: 7
-- **Controllers**: 6
-- **Classes abstratas**: 2
-- **Implementações polimórficas**: 5
-
-## 🎯 Conceitos Demonstrados
-
-- ✅ **Herança** - BaseRepository genérico
-- ✅ **Polimorfismo** - Fretes e Pagamentos
-- ✅ **Encapsulamento** - Controllers e modelos
-- ✅ **Abstração** - Classes ABC
-- ✅ **Padrão MVC** - Arquitetura em camadas
-- ✅ **Padrão Repository** - Acesso a dados
-- ✅ **Dependency Injection** - Session nos controllers
-- ✅ **Transações Atômicas** - Consistência de dados
-
 ---
 
 ## 🔧 Resolução de Problemas
 
-### Erro: SQLAlchemy com Python 3.13
+### ❌ Erro: SQLAlchemy com Python 3.13
 
-**Problema:**
+**Sintoma:**
 ```
 AssertionError: Class <class 'sqlalchemy.sql.elements.SQLCoreOperations'> 
 directly inherits TypingOnly but has additional attributes
 ```
 
-**Causa:** Incompatibilidade entre Python 3.13 (muito recente) e SQLAlchemy 2.0.36.
+**Causa:** Python 3.13 é muito recente e incompatível com SQLAlchemy 2.0.36
 
-**Solução 1: Downgrade do SQLAlchemy (RECOMENDADO)**
-
-```powershell
-# Ativar ambiente virtual
-venv\Scripts\activate
-
-# Desinstalar SQLAlchemy atual
+**Solução 1 (Rápida):**
+```bash
 pip uninstall sqlalchemy -y
-
-# Instalar versão compatível
 pip install SQLAlchemy==2.0.35
-
-# Executar aplicação
-python app.py
 ```
 
-**Solução 2: Usar Python 3.11 ou 3.12**
+**Solução 2 (Recomendada):**
+Usar Python 3.11 ou 3.12
 
-```powershell
-# Remover ambiente virtual antigo
-Remove-Item -Recurse -Force venv
+---
 
-# Criar novo com Python 3.12
-py -3.12 -m venv venv
+### ❌ Erro: ModuleNotFoundError
 
-# Ativar
+**Sintoma:**
+```
+ModuleNotFoundError: No module named 'flask'
+```
+
+**Solução:**
+```bash
+# Ativar ambiente virtual
 venv\Scripts\activate
 
 # Instalar dependências
 pip install -r requirements.txt
-
-# Executar
-python app.py
 ```
-
-### Erro: ModuleNotFoundError: No module named 'database'
-
-**Problema:** Arquivo `database.py` não encontrado.
-
-**Solução:** O arquivo já está criado. Tente:
-
-```powershell
-# Limpar cache do Python
-Remove-Item -Recurse -Force __pycache__
-
-# Fechar e reabrir terminal
-# Executar novamente
-python app.py
-```
-
-### Erro: Filtros não funcionam corretamente
-
-**Problema:** Ao selecionar categoria + preço, mostra produtos de todas as categorias.
-
-**Solução:** Já corrigido na versão atual. Se persistir:
-
-1. Verifique se está usando a versão mais recente do código
-2. Reinicie o servidor Flask (`CTRL+C` e `python app.py`)
-3. Limpe o cache do navegador (`CTRL+SHIFT+DEL`)
-
-### Erro: Banco de dados não inicializado
-
-**Problema:** Tabelas não existem ou admin não foi criado.
-
-**Solução:**
-
-```powershell
-# Executar script de inicialização
-python init_db.py
-```
-
-Isso irá:
-- Criar banco `scee_loja.db`
-- Criar todas as tabelas
-- Criar categorias padrão
-- Criar admin: `admin@scee.com` / `Admin@123`
 
 ---
 
-## 📝 Licença
+### ❌ Erro: Banco não inicializado
 
-Este projeto foi desenvolvido para fins educacionais, demonstrando conceitos de Programação Orientada a Objetos.
+**Sintoma:**
+```
+sqlalchemy.exc.OperationalError: no such table: clientes
+```
+
+**Solução:**
+```bash
+python init_db.py
+```
+
+---
+
+### ❌ Erro: Porta 5000 em uso
+
+**Sintoma:**
+```
+OSError: [WinError 10048] Only one usage of each socket address
+```
+
+**Solução:**
+```bash
+# Encontrar processo
+netstat -ano | findstr :5000
+
+# Matar processo (substitua PID)
+taskkill /PID <PID> /F
+```
+
+---
+
+## 📊 Tecnologias Utilizadas
+
+| Tecnologia | Versão | Uso |
+|------------|--------|-----|
+| Python | 3.11+ | Linguagem principal |
+| Flask | 3.1.0 | Framework web |
+| SQLAlchemy | 2.0.35 | ORM |
+| SQLite | 3.x | Banco de dados |
+| Argon2 | 23.1.0 | Hash de senhas |
+| Jinja2 | 3.1.4 | Templates |
+
+---
+
+## 📈 Estatísticas
+
+- **Linhas de código:** ~3.500
+- **Arquivos Python:** 28
+- **Templates HTML:** 20
+- **Rotas:** 33
+- **Modelos:** 8
+- **Repositórios:** 7
+- **Controllers:** 6
+
+---
+
+## 🎯 Padrões de Projeto
+
+- ✅ **MVC** - Separação de responsabilidades
+- ✅ **Repository Pattern** - Acesso a dados
+- ✅ **Dependency Injection** - Injeção de dependências
+- ✅ **Strategy Pattern** - Polimorfismo (fretes/pagamentos)
+- ✅ **Factory Pattern** - Criação de objetos
+
+---
+
+## 📝 Credenciais Padrão
+
+### Admin:
+- **Email:** admin@scee.com
+- **Senha:** Admin@123
+
+### Cliente (criar novo):
+- Registrar em: http://localhost:5000/registro
+
+---
+
+## 🔒 Segurança
+
+- ✅ Senhas com Argon2 (vencedor do Password Hashing Competition)
+- ✅ Validação de CPF
+- ✅ Validação de email único
+- ✅ Senha forte obrigatória
+- ✅ Controle de sessões
+- ✅ Proteção de rotas admin
+
+---
+
+## 📚 Documentação Adicional
+
+Para mais detalhes, consulte:
+- `RELATORIO_POO.md` - Análise dos conceitos de POO aplicados
+
+---
+
+## 💡 Dicas de Uso
+
+### Para Testar o Sistema:
+
+1. **Como Cliente:**
+   - Registrar nova conta
+   - Navegar pelos produtos
+   - Adicionar ao carrinho
+   - Finalizar compra (escolher frete)
+   - Ver pedidos em "Minha Conta"
+
+2. **Como Admin:**
+   - Login: admin@scee.com / Admin@123
+   - Criar categorias
+   - Criar produtos (com imagens)
+   - Gerenciar pedidos
+   - Ver clientes
+
+---
+
+## 🎓 Desenvolvido para fins educacionais
+
+Este projeto demonstra a aplicação prática dos conceitos de Programação Orientada a Objetos em um sistema real e funcional.
+
+---
+
+**© 2025 SCEE - Sistema de Comércio Eletrônico**

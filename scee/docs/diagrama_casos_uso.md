@@ -1,448 +1,481 @@
-# Diagrama de Casos de Uso UML - SCEE
+# 📋 DIAGRAMA DE CASOS DE USO - SCEE
+
+Representação dos casos de uso do sistema por tipo de usuário.
+
+---
+
+## 👥 ATORES
+
+1. **Cliente** - Usuário que compra produtos
+2. **Administrador** - Gerencia o sistema
+3. **Sistema** - Processos automáticos
+
+---
+
+## 🎭 CASOS DE USO POR ATOR
+
+### 👤 CLIENTE
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    SISTEMA SCEE - CASOS DE USO                               │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-
-        ┌──────────┐
-        │ Cliente  │
-        └────┬─────┘
-             │
-             │
-    ┌────────┼────────────────────────────────────────────────────┐
-    │        │                                                    │
-    │        │                                                    │
-    ▼        ▼                                                    ▼
-┌────────────────┐                                      ┌──────────────────┐
-│ UC01: Registrar│                                      │ UC02: Fazer Login│
-│     Conta      │                                      │                  │
-└────────────────┘                                      └──────────────────┘
-    │                                                            │
-    │ <<include>>                                               │
-    ▼                                                            ▼
-┌────────────────┐                                      ┌──────────────────┐
-│ Validar E-mail │                                      │   Autenticar     │
-│   e CPF        │                                      │   Credenciais    │
-└────────────────┘                                      └──────────────────┘
-    │
-    │ <<include>>
-    ▼
-┌────────────────┐
-│ Validar Senha  │
-│     Forte      │
-└────────────────┘
-
-
-        ┌──────────┐
-        │ Cliente  │
-        └────┬─────┘
-             │
-    ┌────────┼────────────────────────────────────────┐
-    │        │                                        │
-    ▼        ▼                                        ▼
-┌────────────────┐  ┌──────────────────┐    ┌──────────────────┐
-│ UC03: Visualizar│  │ UC04: Buscar     │    │ UC05: Filtrar    │
-│    Produtos    │  │    Produtos      │    │    Produtos      │
-└────────────────┘  └──────────────────┘    └──────────────────┘
-         │                   │                        │
-         │                   │                        │
-         └───────────────────┴────────────────────────┘
-                             │
-                             │ <<extend>>
-                             ▼
-                    ┌──────────────────┐
-                    │ Filtrar por Faixa│
-                    │    de Preço      │
-                    └──────────────────┘
-
-
-        ┌──────────┐
-        │ Cliente  │
-        └────┬─────┘
-             │
-    ┌────────┼────────────────────────────────────────┐
-    │        │                                        │
-    ▼        ▼                                        ▼
-┌────────────────┐  ┌──────────────────┐    ┌──────────────────┐
-│ UC06: Adicionar│  │ UC07: Remover    │    │ UC08: Atualizar  │
-│  ao Carrinho   │  │  do Carrinho     │    │   Quantidade     │
-└────────────────┘  └──────────────────┘    └──────────────────┘
-         │                   │                        │
-         │                   │                        │
-         └───────────────────┴────────────────────────┘
-                             │
-                             │ <<include>>
-                             ▼
-                    ┌──────────────────┐
-                    │ Recalcular Total │
-                    └──────────────────┘
-
-
-        ┌──────────┐
-        │ Cliente  │
-        └────┬─────┘
-             │
-             │
-             ▼
-    ┌──────────────────┐
-    │ UC09: Finalizar  │
-    │      Compra      │
-    │   (Checkout)     │
-    └──────────────────┘
-             │
-             │ <<include>>
-    ┌────────┼────────────────────────┐
-    │        │                        │
-    ▼        ▼                        ▼
-┌────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│ Selecionar     │  │ Selecionar Método│  │ Criar Pedido     │
-│   Endereço     │  │  de Pagamento    │  │                  │
-└────────────────┘  └──────────────────┘  └──────────────────┘
-                                                   │
-                                                   │ <<include>>
-                                          ┌────────┼────────────┐
-                                          │        │            │
-                                          ▼        ▼            ▼
-                                    ┌─────────┐ ┌──────┐ ┌──────────┐
-                                    │Verificar│ │Abater│ │  Enviar  │
-                                    │ Estoque │ │Estoque│ │  E-mail  │
-                                    └─────────┘ └──────┘ └──────────┘
-
-
-        ┌──────────┐
-        │ Cliente  │
-        └────┬─────┘
-             │
-    ┌────────┼────────────────────────────────────────┐
-    │        │                                        │
-    ▼        ▼                                        ▼
-┌────────────────┐  ┌──────────────────┐    ┌──────────────────┐
-│ UC10: Gerenciar│  │ UC11: Adicionar  │    │ UC12: Atualizar  │
-│     Perfil     │  │    Endereço      │    │    Endereço      │
-└────────────────┘  └──────────────────┘    └──────────────────┘
-         │                                            │
-         │                                            │
-         ▼                                            ▼
-┌────────────────┐                          ┌──────────────────┐
-│ UC13: Remover  │                          │ UC14: Visualizar │
-│    Endereço    │                          │     Pedidos      │
-└────────────────┘                          └──────────────────┘
-
-
-        ┌──────────┐
-        │  Admin   │
-        └────┬─────┘
-             │
-    ┌────────┼────────────────────────────────────────┐
-    │        │                                        │
-    ▼        ▼                                        ▼
-┌────────────────┐  ┌──────────────────┐    ┌──────────────────┐
-│ UC15: Criar    │  │ UC16: Editar     │    │ UC17: Deletar    │
-│    Produto     │  │    Produto       │    │    Produto       │
-└────────────────┘  └──────────────────┘    └──────────────────┘
-         │
-         │ <<include>>
-         ▼
-┌────────────────┐
-│ Upload Imagens │
-│  (máx. 5)      │
-└────────────────┘
-
-
-        ┌──────────┐
-        │  Admin   │
-        └────┬─────┘
-             │
-    ┌────────┼────────────────────────────────────────┐
-    │        │                                        │
-    ▼        ▼                                        ▼
-┌────────────────┐  ┌──────────────────┐    ┌──────────────────┐
-│ UC18: Listar   │  │ UC19: Filtrar    │    │ UC20: Atualizar  │
-│    Pedidos     │  │  por Status      │    │  Status Pedido   │
-└────────────────┘  └──────────────────┘    └──────────────────┘
-
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        DESCRIÇÃO DOS CASOS DE USO                            │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-MÓDULO DE AUTENTICAÇÃO E CONTAS
-════════════════════════════════
-
-UC01: Registrar Conta
-─────────────────────
-Ator: Cliente
-Descrição: Cliente cria uma nova conta no sistema
-Pré-condições: Nenhuma
-Fluxo Principal:
-  1. Cliente acessa página de registro
-  2. Sistema exibe formulário
-  3. Cliente preenche: Nome, E-mail, CPF, Senha, Confirmação de Senha
-  4. Sistema valida e-mail único (include)
-  5. Sistema valida CPF único e dígitos verificadores (include)
-  6. Sistema valida senha forte (include)
-  7. Sistema criptografa senha com Argon2
-  8. Sistema cria conta e autentica automaticamente
-Pós-condições: Cliente autenticado e redirecionado para "Minha Conta"
-
-UC02: Fazer Login
-─────────────────
-Ator: Cliente ou Admin
-Descrição: Usuário autentica-se no sistema
-Pré-condições: Conta existente
-Fluxo Principal:
-  1. Usuário acessa página de login
-  2. Sistema exibe formulário
-  3. Usuário informa E-mail, Senha e Tipo (Cliente/Admin)
-  4. Sistema autentica credenciais (include)
-  5. Sistema redireciona conforme tipo de usuário
-Pós-condições: Usuário autenticado
-
-
-MÓDULO DE CATÁLOGO E PRODUTOS
-══════════════════════════════
-
-UC03: Visualizar Produtos
-─────────────────────────
-Ator: Cliente
-Descrição: Cliente visualiza catálogo de produtos
-Pré-condições: Nenhuma
-Fluxo Principal:
-  1. Cliente acessa página de produtos
-  2. Sistema exibe grade paginada (12 por página)
-  3. Cliente navega entre páginas
-Pós-condições: Produtos exibidos
-
-UC04: Buscar Produtos
-─────────────────────
-Ator: Cliente
-Descrição: Cliente busca produtos por texto
-Pré-condições: Nenhuma
-Fluxo Principal:
-  1. Cliente insere texto de busca
-  2. Sistema busca em nome e descrição
-  3. Sistema exibe resultados
-Pós-condições: Resultados exibidos
-
-UC05: Filtrar Produtos
-──────────────────────
-Ator: Cliente
-Descrição: Cliente filtra produtos por categoria ou preço
-Pré-condições: Nenhuma
-Fluxo Principal:
-  1. Cliente seleciona filtros
-  2. Sistema aplica filtros
-  3. Sistema exibe resultados filtrados
-Extensões:
-  - Filtrar por Faixa de Preço (extend)
-Pós-condições: Produtos filtrados exibidos
-
-
-MÓDULO DE CARRINHO
-══════════════════
-
-UC06: Adicionar ao Carrinho
-───────────────────────────
-Ator: Cliente
-Descrição: Cliente adiciona produto ao carrinho
-Pré-condições: Produto com estoque disponível
-Fluxo Principal:
-  1. Cliente seleciona produto e quantidade
-  2. Sistema verifica estoque
-  3. Sistema adiciona ao carrinho
-  4. Sistema recalcula total (include)
-Pós-condições: Produto adicionado ao carrinho
-
-UC07: Remover do Carrinho
-─────────────────────────
-Ator: Cliente
-Descrição: Cliente remove produto do carrinho
-Pré-condições: Item no carrinho
-Fluxo Principal:
-  1. Cliente seleciona item para remover
-  2. Sistema remove item
-  3. Sistema recalcula total (include)
-Pós-condições: Item removido
-
-UC08: Atualizar Quantidade
-──────────────────────────
-Ator: Cliente
-Descrição: Cliente altera quantidade de item no carrinho
-Pré-condições: Item no carrinho
-Fluxo Principal:
-  1. Cliente altera quantidade
-  2. Sistema atualiza quantidade
-  3. Sistema recalcula total (include)
-Pós-condições: Quantidade atualizada
-
-
-MÓDULO DE CHECKOUT E PEDIDOS
-════════════════════════════
-
-UC09: Finalizar Compra (Checkout)
-─────────────────────────────────
-Ator: Cliente
-Descrição: Cliente finaliza compra criando pedido
-Pré-condições: Cliente autenticado, carrinho não vazio
-Fluxo Principal:
-  1. Cliente acessa checkout
-  2. Sistema exibe resumo do pedido
-  3. Cliente seleciona endereço de entrega (include)
-  4. Cliente seleciona método de pagamento (include)
-  5. Sistema cria pedido em transação atômica (include)
-  6. Sistema verifica estoque (include)
-  7. Sistema abate estoque (include)
-  8. Sistema envia e-mail transacional (include)
-  9. Sistema limpa carrinho
-Pós-condições: Pedido criado, estoque atualizado
-
-UC14: Visualizar Pedidos
-───────────────────────
-Ator: Cliente
-Descrição: Cliente visualiza histórico de pedidos
-Pré-condições: Cliente autenticado
-Fluxo Principal:
-  1. Cliente acessa "Minha Conta"
-  2. Sistema exibe lista de pedidos
-Pós-condições: Pedidos exibidos
-
-
-MÓDULO DE PERFIL
-════════════════
-
-UC10: Gerenciar Perfil
-─────────────────────
-Ator: Cliente
-Descrição: Cliente atualiza informações do perfil
-Pré-condições: Cliente autenticado
-Fluxo Principal:
-  1. Cliente acessa "Minha Conta"
-  2. Cliente atualiza nome
-  3. Sistema salva alterações
-Pós-condições: Perfil atualizado
-
-UC11: Adicionar Endereço
-───────────────────────
-Ator: Cliente
-Descrição: Cliente adiciona novo endereço de entrega
-Pré-condições: Cliente autenticado
-Fluxo Principal:
-  1. Cliente preenche dados do endereço
-  2. Sistema valida CEP e UF
-  3. Sistema salva endereço
-Pós-condições: Endereço adicionado
-
-UC12: Atualizar Endereço
-───────────────────────
-Ator: Cliente
-Descrição: Cliente atualiza endereço existente
-Pré-condições: Cliente autenticado, endereço existente
-Fluxo Principal:
-  1. Cliente altera dados do endereço
-  2. Sistema valida dados
-  3. Sistema atualiza endereço
-Pós-condições: Endereço atualizado
-
-UC13: Remover Endereço
-─────────────────────
-Ator: Cliente
-Descrição: Cliente remove endereço
-Pré-condições: Cliente autenticado, endereço existente
-Fluxo Principal:
-  1. Cliente seleciona endereço para remover
-  2. Sistema remove endereço
-Pós-condições: Endereço removido
-
-
-MÓDULO ADMINISTRATIVO - PRODUTOS
-═════════════════════════════════
-
-UC15: Criar Produto
-──────────────────
-Ator: Admin
-Descrição: Admin cria novo produto no catálogo
-Pré-condições: Admin autenticado
-Fluxo Principal:
-  1. Admin acessa formulário de criação
-  2. Admin preenche: Nome, SKU, Descrição, Preço, Estoque, Categoria
-  3. Admin faz upload de imagens (include, máx. 5)
-  4. Sistema valida SKU único
-  5. Sistema valida preço > 0
-  6. Sistema cria produto
-Pós-condições: Produto criado
-
-UC16: Editar Produto
-───────────────────
-Ator: Admin
-Descrição: Admin atualiza produto existente
-Pré-condições: Admin autenticado, produto existente
-Fluxo Principal:
-  1. Admin seleciona produto
-  2. Admin altera dados
-  3. Sistema valida dados
-  4. Sistema atualiza produto
-Pós-condições: Produto atualizado
-
-UC17: Deletar Produto
-────────────────────
-Ator: Admin
-Descrição: Admin remove produto do catálogo
-Pré-condições: Admin autenticado, produto existente
-Fluxo Principal:
-  1. Admin seleciona produto
-  2. Admin confirma exclusão
-  3. Sistema remove produto
-Pós-condições: Produto removido
-
-
-MÓDULO ADMINISTRATIVO - PEDIDOS
-════════════════════════════════
-
-UC18: Listar Pedidos
-───────────────────
-Ator: Admin
-Descrição: Admin visualiza todos os pedidos
-Pré-condições: Admin autenticado
-Fluxo Principal:
-  1. Admin acessa página de pedidos
-  2. Sistema exibe lista paginada (50 por página)
-Pós-condições: Pedidos exibidos
-
-UC19: Filtrar por Status
-───────────────────────
-Ator: Admin
-Descrição: Admin filtra pedidos por status
-Pré-condições: Admin autenticado
-Fluxo Principal:
-  1. Admin seleciona status
-  2. Sistema filtra pedidos
-  3. Sistema exibe resultados
-Pós-condições: Pedidos filtrados exibidos
-
-UC20: Atualizar Status Pedido
-─────────────────────────────
-Ator: Admin
-Descrição: Admin altera status de um pedido
-Pré-condições: Admin autenticado, pedido existente
-Fluxo Principal:
-  1. Admin seleciona pedido
-  2. Admin seleciona novo status
-  3. Sistema atualiza status
-Pós-condições: Status do pedido atualizado
-
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          RELACIONAMENTOS                                     │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-<<include>>: Relacionamento obrigatório
-- Validar E-mail e CPF é parte obrigatória de Registrar Conta
-- Validar Senha Forte é parte obrigatória de Registrar Conta
-- Recalcular Total é parte obrigatória das operações de carrinho
-- Verificar/Abater Estoque é parte obrigatória de Criar Pedido
-
-<<extend>>: Relacionamento opcional
-- Filtrar por Faixa de Preço é uma extensão opcional de Filtrar Produtos
+┌─────────────────────────────────────────────────────────────┐
+│                         CLIENTE                             │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC01       │    │   UC02       │    │   UC03       │
+│ Registrar    │    │ Fazer Login  │    │ Navegar      │
+│ Conta        │    │              │    │ Produtos     │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │                   │                   │
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC04       │    │   UC05       │    │   UC06       │
+│ Filtrar      │    │ Ver Detalhes │    │ Adicionar ao │
+│ Produtos     │    │ Produto      │    │ Carrinho     │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │                   │                   │
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC07       │    │   UC08       │    │   UC09       │
+│ Gerenciar    │    │ Finalizar    │    │ Escolher     │
+│ Carrinho     │    │ Compra       │    │ Frete        │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │                   │                   │
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC10       │    │   UC11       │    │   UC12       │
+│ Gerenciar    │    │ Gerenciar    │    │ Ver          │
+│ Perfil       │    │ Endereços    │    │ Pedidos      │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │
+        │
+        ↓
+┌──────────────┐
+│   UC13       │
+│ Cancelar     │
+│ Pedido       │
+└──────────────┘
 ```
+
+---
+
+### 👨‍💼 ADMINISTRADOR
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      ADMINISTRADOR                          │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC14       │    │   UC15       │    │   UC16       │
+│ Fazer Login  │    │ Acessar      │    │ Gerenciar    │
+│ Admin        │    │ Dashboard    │    │ Produtos     │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │                   │                   │
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC17       │    │   UC18       │    │   UC19       │
+│ Criar        │    │ Editar       │    │ Deletar      │
+│ Produto      │    │ Produto      │    │ Produto      │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │                   │                   │
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC20       │    │   UC21       │    │   UC22       │
+│ Gerenciar    │    │ Gerenciar    │    │ Atualizar    │
+│ Imagens      │    │ Categorias   │    │ Status       │
+│ Produto      │    │              │    │ Pedido       │
+└──────────────┘    └──────────────┘    └──────────────┘
+        │                   │                   │
+        │                   │                   │
+        ↓                   ↓                   ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│   UC23       │    │   UC24       │    │   UC25       │
+│ Visualizar   │    │ Visualizar   │    │ Filtrar      │
+│ Pedidos      │    │ Clientes     │    │ Pedidos      │
+└──────────────┘    └──────────────┘    └──────────────┘
+```
+
+---
+
+## 📝 DETALHAMENTO DOS CASOS DE USO
+
+### UC01: Registrar Conta
+**Ator:** Cliente  
+**Descrição:** Cliente cria nova conta no sistema  
+**Pré-condições:** Nenhuma  
+**Fluxo Principal:**
+1. Cliente acessa página de registro
+2. Preenche: nome, email, CPF, senha
+3. Sistema valida CPF
+4. Sistema valida email único
+5. Sistema valida senha forte
+6. Sistema cria conta com senha hash (Argon2)
+7. Cliente é redirecionado para área logada
+
+**Pós-condições:** Cliente cadastrado e logado
+
+---
+
+### UC02: Fazer Login
+**Ator:** Cliente  
+**Descrição:** Cliente acessa sua conta  
+**Pré-condições:** Cliente cadastrado  
+**Fluxo Principal:**
+1. Cliente acessa página de login
+2. Informa email e senha
+3. Sistema valida credenciais
+4. Sistema cria sessão
+5. Cliente é redirecionado para página inicial
+
+**Pós-condições:** Cliente autenticado
+
+---
+
+### UC03: Navegar Produtos
+**Ator:** Cliente  
+**Descrição:** Cliente visualiza catálogo de produtos  
+**Pré-condições:** Nenhuma  
+**Fluxo Principal:**
+1. Cliente acessa página de produtos
+2. Sistema lista produtos com paginação
+3. Cliente visualiza: nome, preço, categoria, estoque
+
+**Pós-condições:** Produtos exibidos
+
+---
+
+### UC04: Filtrar Produtos
+**Ator:** Cliente  
+**Descrição:** Cliente filtra produtos por critérios  
+**Pré-condições:** Estar na página de produtos  
+**Fluxo Principal:**
+1. Cliente seleciona filtros:
+   - Por categoria
+   - Por faixa de preço
+   - Por busca textual
+2. Sistema aplica filtros
+3. Sistema exibe produtos filtrados
+
+**Pós-condições:** Produtos filtrados exibidos
+
+---
+
+### UC05: Ver Detalhes Produto
+**Ator:** Cliente  
+**Descrição:** Cliente visualiza detalhes de um produto  
+**Pré-condições:** Produto existir  
+**Fluxo Principal:**
+1. Cliente clica em produto
+2. Sistema exibe:
+   - Carrossel de imagens
+   - Nome, descrição, preço
+   - Categoria, SKU
+   - Estoque disponível
+3. Cliente pode adicionar ao carrinho
+
+**Pós-condições:** Detalhes exibidos
+
+---
+
+### UC06: Adicionar ao Carrinho
+**Ator:** Cliente  
+**Descrição:** Cliente adiciona produto ao carrinho  
+**Pré-condições:** Produto com estoque  
+**Fluxo Principal:**
+1. Cliente seleciona quantidade
+2. Cliente clica em "Adicionar ao Carrinho"
+3. Sistema valida estoque
+4. Sistema adiciona ao carrinho
+5. Sistema exibe mensagem de sucesso
+
+**Pós-condições:** Produto no carrinho
+
+---
+
+### UC07: Gerenciar Carrinho
+**Ator:** Cliente  
+**Descrição:** Cliente gerencia itens do carrinho  
+**Pré-condições:** Ter itens no carrinho  
+**Fluxo Principal:**
+1. Cliente acessa carrinho
+2. Cliente pode:
+   - Atualizar quantidade
+   - Remover item
+   - Ver total
+3. Sistema atualiza valores
+
+**Pós-condições:** Carrinho atualizado
+
+---
+
+### UC08: Finalizar Compra
+**Ator:** Cliente  
+**Descrição:** Cliente finaliza pedido  
+**Pré-condições:** Cliente logado, carrinho com itens  
+**Fluxo Principal:**
+1. Cliente acessa checkout
+2. Cliente seleciona endereço de entrega
+3. Cliente escolhe tipo de frete:
+   - Fixo (R$ 15,00 - 7 dias)
+   - Correios (R$ 15-35 - 5-12 dias)
+   - Expresso (R$ 30-60 - 2-5 dias)
+4. Sistema calcula frete (polimorfismo)
+5. Cliente escolhe método de pagamento:
+   - Cartão
+   - Pix
+   - Boleto
+6. Sistema cria pedido
+7. Sistema atualiza estoque
+8. Sistema limpa carrinho
+
+**Pós-condições:** Pedido criado, estoque atualizado
+
+---
+
+### UC09: Escolher Frete
+**Ator:** Cliente  
+**Descrição:** Cliente escolhe tipo de frete  
+**Pré-condições:** Estar no checkout  
+**Fluxo Principal:**
+1. Sistema exibe opções de frete
+2. Cliente seleciona tipo
+3. Sistema calcula valor e prazo
+4. Sistema exibe total com frete
+
+**Pós-condições:** Frete selecionado
+
+---
+
+### UC10: Gerenciar Perfil
+**Ator:** Cliente  
+**Descrição:** Cliente edita dados pessoais  
+**Pré-condições:** Cliente logado  
+**Fluxo Principal:**
+1. Cliente acessa "Minha Conta"
+2. Cliente edita: nome, email
+3. Sistema valida dados
+4. Sistema atualiza perfil
+
+**Pós-condições:** Perfil atualizado
+
+---
+
+### UC11: Gerenciar Endereços
+**Ator:** Cliente  
+**Descrição:** Cliente gerencia endereços de entrega  
+**Pré-condições:** Cliente logado  
+**Fluxo Principal:**
+1. Cliente acessa endereços
+2. Cliente pode:
+   - Adicionar novo endereço
+   - Editar endereço existente
+   - Deletar endereço
+3. Sistema valida CEP
+4. Sistema salva alterações
+
+**Pós-condições:** Endereços atualizados
+
+---
+
+### UC12: Ver Pedidos
+**Ator:** Cliente  
+**Descrição:** Cliente visualiza histórico de pedidos  
+**Pré-condições:** Cliente logado  
+**Fluxo Principal:**
+1. Cliente acessa "Meus Pedidos"
+2. Sistema lista pedidos com:
+   - Data, status, total
+   - Tipo de frete, valor frete
+   - Prazo de entrega
+3. Cliente pode ver detalhes
+
+**Pós-condições:** Pedidos exibidos
+
+---
+
+### UC13: Cancelar Pedido
+**Ator:** Cliente  
+**Descrição:** Cliente cancela pedido  
+**Pré-condições:** Pedido em status "Pendente" ou "Processando"  
+**Fluxo Principal:**
+1. Cliente seleciona pedido
+2. Cliente clica em "Cancelar"
+3. Sistema valida status
+4. Sistema cancela pedido
+5. Sistema devolve estoque
+
+**Pós-condições:** Pedido cancelado, estoque devolvido
+
+---
+
+### UC14: Fazer Login Admin
+**Ator:** Administrador  
+**Descrição:** Admin acessa área administrativa  
+**Pré-condições:** Ter conta admin  
+**Fluxo Principal:**
+1. Admin acessa /admin
+2. Informa email e senha
+3. Sistema valida credenciais admin
+4. Admin é redirecionado para dashboard
+
+**Pós-condições:** Admin autenticado
+
+---
+
+### UC15: Acessar Dashboard
+**Ator:** Administrador  
+**Descrição:** Admin visualiza painel administrativo  
+**Pré-condições:** Admin logado  
+**Fluxo Principal:**
+1. Admin acessa dashboard
+2. Sistema exibe estatísticas:
+   - Total de produtos
+   - Total de pedidos
+   - Total de clientes
+
+**Pós-condições:** Dashboard exibido
+
+---
+
+### UC16-19: Gerenciar Produtos
+**Ator:** Administrador  
+**Descrição:** Admin gerencia produtos (CRUD)  
+**Pré-condições:** Admin logado  
+**Fluxo Principal:**
+- **Criar:** Admin preenche formulário, adiciona até 5 imagens
+- **Editar:** Admin atualiza dados, adiciona/remove imagens
+- **Deletar:** Admin remove produto
+- **Listar:** Admin visualiza todos os produtos
+
+**Pós-condições:** Produtos gerenciados
+
+---
+
+### UC20: Gerenciar Imagens Produto
+**Ator:** Administrador  
+**Descrição:** Admin gerencia imagens de produtos  
+**Pré-condições:** Admin logado, produto existir  
+**Fluxo Principal:**
+1. Admin acessa edição de produto
+2. Admin visualiza imagens atuais em grid
+3. Admin pode:
+   - Remover imagem (botão ✕)
+   - Adicionar novas (até 5 total)
+4. Sistema valida formatos (JPG, PNG)
+5. Sistema salva alterações
+
+**Pós-condições:** Imagens atualizadas
+
+---
+
+### UC21: Gerenciar Categorias
+**Ator:** Administrador  
+**Descrição:** Admin gerencia categorias (CRUD)  
+**Pré-condições:** Admin logado  
+**Fluxo Principal:**
+- **Criar:** Admin adiciona nova categoria
+- **Editar:** Admin atualiza nome
+- **Deletar:** Admin remove categoria (se sem produtos)
+- **Listar:** Admin visualiza todas
+
+**Pós-condições:** Categorias gerenciadas
+
+---
+
+### UC22: Atualizar Status Pedido
+**Ator:** Administrador  
+**Descrição:** Admin atualiza status de pedido  
+**Pré-condições:** Admin logado, pedido existir  
+**Fluxo Principal:**
+1. Admin acessa pedidos
+2. Admin seleciona pedido
+3. Admin altera status:
+   - Pendente
+   - Processando
+   - Enviado
+   - Entregue
+   - Cancelado
+4. Sistema atualiza pedido
+
+**Pós-condições:** Status atualizado
+
+---
+
+### UC23: Visualizar Pedidos
+**Ator:** Administrador  
+**Descrição:** Admin visualiza todos os pedidos  
+**Pré-condições:** Admin logado  
+**Fluxo Principal:**
+1. Admin acessa pedidos
+2. Sistema lista pedidos com:
+   - Cliente, data, total
+   - Status, frete
+3. Admin pode filtrar por status
+
+**Pós-condições:** Pedidos exibidos
+
+---
+
+### UC24: Visualizar Clientes
+**Ator:** Administrador  
+**Descrição:** Admin visualiza clientes cadastrados  
+**Pré-condições:** Admin logado  
+**Fluxo Principal:**
+1. Admin acessa clientes
+2. Sistema lista clientes com:
+   - Nome, email, CPF
+   - Data de cadastro
+3. Admin pode ver pedidos do cliente
+
+**Pós-condições:** Clientes exibidos
+
+---
+
+### UC25: Filtrar Pedidos
+**Ator:** Administrador  
+**Descrição:** Admin filtra pedidos por status  
+**Pré-condições:** Admin logado  
+**Fluxo Principal:**
+1. Admin seleciona status
+2. Sistema filtra pedidos
+3. Sistema exibe resultados
+
+**Pós-condições:** Pedidos filtrados exibidos
+
+---
+
+## 📊 RESUMO
+
+**Total de Casos de Uso:** 25
+
+### Por Ator:
+- **Cliente:** 13 casos de uso
+- **Administrador:** 12 casos de uso
+
+### Por Categoria:
+- **Autenticação:** 3 (UC01, UC02, UC14)
+- **Produtos:** 8 (UC03-UC05, UC16-UC20)
+- **Carrinho/Compra:** 4 (UC06-UC09)
+- **Perfil/Endereços:** 2 (UC10, UC11)
+- **Pedidos:** 5 (UC12, UC13, UC22, UC23, UC25)
+- **Categorias:** 1 (UC21)
+- **Clientes:** 1 (UC24)
+- **Dashboard:** 1 (UC15)
+
+---
+
+**Diagrama completo de casos de uso do SCEE** 📋
