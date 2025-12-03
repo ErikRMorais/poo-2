@@ -1,4 +1,9 @@
 """Aplicação principal Flask (View/Controller)."""
+# INTEGRANTES: 
+# ERIK ROBERTO DE SOUZA MORAIS
+# FRANCISCO DE JULIO FARIA
+# LUIZ MOTA 
+# ROBERTO VINICIUS DE MORAIS ALCANTARA
 
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
